@@ -1,0 +1,10 @@
+.eventList {
+    max-width: 80%;
+    margin: 0 auto;
+    justify-content: center;
+    display: flex; 
+    flex-wrap: wrap; 
+    row-gap: 20px; 
+    column-gap: 10px; 
+    list-style-type: none;
+}
