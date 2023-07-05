@@ -52,7 +52,7 @@ const AuthPage = () => {
     };
 
     const googleLoginHandler = () => {
-        signIn('google');
+        signIn('google', { callbackUrl: '/events' });
     };
 
     return (
