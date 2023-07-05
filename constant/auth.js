@@ -1,4 +1,3 @@
-import { BASE_URL } from './api';
 
 export const AUTH_SESSION_OPTIONS = {
     refetchInterval: 5 * 60,
@@ -7,4 +6,4 @@ export const AUTH_SESSION_OPTIONS = {
 
 export const AUTH_ENCRYPTION_LENGTH = 12;
 
-export const AUTH_REDIRECT_PATH = `${BASE_URL}/events`;
+export const AUTH_REDIRECT_PATH = '/events';
