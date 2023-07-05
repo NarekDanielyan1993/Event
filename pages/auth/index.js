@@ -26,6 +26,7 @@ const AuthPage = () => {
         setIsLoading(true);
         const { error, status } = await signIn('credentials', {
             redirect: false,
+            callbackUrl: '/events',
             ...formData,
         });
 
