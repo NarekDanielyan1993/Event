@@ -1,44 +1,81 @@
-import React from 'react';
-import Image from "next/image";
+import { Button, Typography } from '@mui/material';
+import { useState } from 'react';
 
-import classes from "./event-item.module.scss";
+import EventDialogCreate from 'components/events/event-create-dialog';
+import { loadImage } from 'utils';
+
+import { useSession } from 'next-auth/react';
 import EventButton from './event-button';
+import {
+    StyledContent,
+    StyledEventCard,
+    StyledImage,
+    StyledOverlay,
+    StyledText,
+} from './style';
 
-function EventItem({ title, date, location, image, id }) {
+function EventItem({ event, id, onUpdateEvent, onDeleteEvent }) {
+    const { title, location, date, imageId } = event;
+    const [isDialogOpen, setIsDialogOpen] = useState(false);
 
-    const formatedDate = new Date(date).toLocaleDateString("en-us")
+    const { data: session } = useSession();
 
     return (
-        <li className={classes.eventCard}>
-            <Image
-                className={classes.img} 
-                alt={title} 
-                src={`/${image}`}
-                width={280}
+        <StyledEventCard>
+            <StyledImage
+                alt={title}
                 height={280}
+                loader={loadImage}
                 objectFit="cover"
+                src={imageId}
+                width={280}
             />
-            <div className={classes.content}>
-                <div>
-                    <h3 className={classes.title}>{title}</h3>
-                    <div>
-                        <time>{formatedDate}</time>
-                    </div>
-                    <div>
-                        <address>{location}</address>
-                    </div>
-                </div>    
-            </div>
-            <div 
-                className={classes.actions}
-            >
-                <EventButton
-                    buttonText='Event Detail'
-                    href={`events/${id}`}
-                />
-            </div>
-        </li>
-    )
+            <StyledContent>
+                <StyledText component="h3">{title}</StyledText>
+                <time>{date}</time>
+                <StyledText component="address">{location}</StyledText>
+            </StyledContent>
+            <StyledOverlay>
+                <div className="actions">
+                    {session ? (
+                        <>
+                            <Button onClick={() => setIsDialogOpen(true)}>
+                                Edit
+                            </Button>
+                            <Button
+                                className="delete"
+                                onClick={() => onDeleteEvent(id)}
+                            >
+                                Delete
+                            </Button>
+                            <EventDialogCreate
+                                isOpen={isDialogOpen}
+                                onClose={() => setIsDialogOpen(false)}
+                                onSubmit={onUpdateEvent}
+                                propData={event}
+                            />
+                            <EventButton
+                                buttonText="Detail"
+                                href={`/events/${id}`}
+                            />
+                        </>
+                    ) : (
+                        <Typography
+                            sx={{
+                                textTransform: 'uppercase',
+                                color: 'white',
+                                display: 'block',
+                                width: '100%',
+                            }}
+                            textAlign="center"
+                        >
+                            Log in to explore event
+                        </Typography>
+                    )}
+                </div>
+            </StyledOverlay>
+        </StyledEventCard>
+    );
 }
 
 export default EventItem;

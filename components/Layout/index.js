@@ -1,13 +1,12 @@
-import React from 'react'
-import MainHeader from './main-header'
+import MainHeader from './main-header';
 
-function Layout(props) {
+function Layout({ children }) {
     return (
         <>
             <MainHeader />
-            <main>{props.children}</main>
+            <main>{children}</main>
         </>
-    )
+    );
 }
 
-export default Layout
+export default Layout;

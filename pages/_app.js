@@ -1,21 +1,76 @@
-import Layout from '../components/Layout';
+'use client';
+
+import { CacheProvider, ThemeProvider } from '@emotion/react';
+import { CssBaseline } from '@mui/material';
+import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { SessionProvider } from 'next-auth/react';
 import Head from 'next/head';
+import { SnackbarProvider } from 'notistack';
+import PropTypes from 'prop-types';
+import { ErrorBoundary } from 'react-error-boundary';
 
+import Layout from 'components/Layout';
+import { Fallback } from 'components/error/error-boundary-fallback';
+import IsProtected from 'components/is-protected';
+import { AUTH_SESSION_OPTIONS } from 'constant';
+import useGetLayout from 'hooks/useGetLayout';
+import { createEmotionCache, logError } from 'utils';
 import '../styles/globals.css';
+import theme from '../styles/theme';
 
-function MyApp({ Component, pageProps }) {
-  return (
-      <Layout>
-          <Head>
-            <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-            <meta charSet="UTF-8" />
-            <meta name="description" content="Get all the events" />
-            <meta name="author" content="Narek Danielyan" />
-            <title>This is the main page</title>
-          </Head>
-          <Component {...pageProps} />
-      </Layout>
-  )
+const clientSideEmotionCache = createEmotionCache();
+
+function MyApp(props) {
+    const {
+        Component,
+        emotionCache = clientSideEmotionCache,
+        pageProps: { session, ...pageProps },
+    } = props;
+
+    const SelectedLayout = useGetLayout(Component, Layout);
+
+    return (
+        <CacheProvider value={emotionCache}>
+            <LocalizationProvider dateAdapter={AdapterDateFns}>
+                <ThemeProvider theme={theme}>
+                    <CssBaseline />
+                    <Head>
+                        <meta
+                            content="width=device-width, initial-scale=1.0"
+                            name="viewport"
+                        />
+                        <meta charSet="UTF-8" />
+                        <meta content="Get all the events" name="description" />
+                        <meta content="Narek Danielyan" name="author" />
+                        <title>This is the main page</title>
+                    </Head>
+                    <SnackbarProvider>
+                        <ErrorBoundary
+                            FallbackComponent={Fallback}
+                            onError={logError}
+                        >
+                            <SessionProvider
+                                {...AUTH_SESSION_OPTIONS}
+                                session={session}
+                            >
+                                <SelectedLayout>
+                                    <IsProtected
+                                        component={Component}
+                                        pageProps={pageProps}
+                                    />
+                                </SelectedLayout>
+                            </SessionProvider>
+                        </ErrorBoundary>
+                    </SnackbarProvider>
+                </ThemeProvider>
+            </LocalizationProvider>
+        </CacheProvider>
+    );
 }
 
-export default MyApp
+MyApp.propTypes = {
+    Component: PropTypes.elementType.isRequired,
+};
+
+export default MyApp;

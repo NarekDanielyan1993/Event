@@ -1,19 +1,47 @@
-import Link from 'next/dist/client/link'
-import React from 'react'
-
-import classes from "./main-header.module.scss"
+import { signOut, useSession } from 'next-auth/react';
+import Link from 'next/link';
+import {
+    StyledButton,
+    StyledLink,
+    StyledMainHeader,
+    StyledNav,
+    StyledRightSide,
+} from './style';
 
 function MainHeader() {
+    const onLogoutHandler = () => {
+        signOut({ callbackUrl: '/auth' });
+    };
+
+    const { data: session } = useSession();
+
     return (
-        <header className={classes.header}>
-            <div className={classes.logo}>
-                <Link href='/events'>All events</Link>
-            </div>
-            <nav>
-                <Link href='/'>filtered events</Link>
-            </nav>
-        </header>
-    )
+        <StyledMainHeader>
+            <StyledNav>
+                {session && (
+                    <Link href={'/'} passHref>
+                        <StyledLink>NEXT EVENTS</StyledLink>
+                    </Link>
+                )}
+                <StyledRightSide>
+                    {session && (
+                        <Link href="/events" passHref>
+                            <StyledLink>All events</StyledLink>
+                        </Link>
+                    )}
+                    {session ? (
+                        <StyledButton onClick={onLogoutHandler}>
+                            Log out
+                        </StyledButton>
+                    ) : (
+                        <Link href="/auth" passHref>
+                            <StyledLink>Log in</StyledLink>
+                        </Link>
+                    )}
+                </StyledRightSide>
+            </StyledNav>
+        </StyledMainHeader>
+    );
 }
 
-export default MainHeader
+export default MainHeader;

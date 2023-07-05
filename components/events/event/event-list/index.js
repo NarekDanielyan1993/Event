@@ -1,25 +1,24 @@
-import React from 'react';
 import EventItem from './event-item';
+import StyledEventList from './style';
 
-import classes from "./event-list.module.scss";
-
-function EventList({ items }) {
+function EventList({ items, onUpdateEvent, onDeleteEvent }) {
     return (
-        <ul className={classes.eventList}>
-            {items.length > 0 ? items.map(item => {
-                return (
-                    <EventItem 
-                        key={item.id}
-                        title={item.title} 
-                        date={item.date} 
-                        location={item.location} 
-                        image={item.image} 
-                        id={item.id} 
+        <StyledEventList>
+            {items && items.length > 0 ? (
+                items.map((item) => (
+                    <EventItem
+                        event={item}
+                        id={item._id}
+                        key={item._id}
+                        onDeleteEvent={onDeleteEvent}
+                        onUpdateEvent={onUpdateEvent}
                     />
-                )
-            }) : <p className='center'>No items found.</p>}
-        </ul>
-    )
+                ))
+            ) : (
+                <p>No items found</p>
+            )}
+        </StyledEventList>
+    );
 }
 
 export default EventList;

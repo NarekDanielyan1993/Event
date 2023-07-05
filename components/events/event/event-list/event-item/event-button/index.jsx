@@ -1,16 +1,11 @@
-import React from 'react';
-import Link from "next/link";
+import Link from 'next/link';
 
-function EventButton({style, className, href, buttonText}) {
+function EventButton({ style, className, href, buttonText }) {
     return (
-        <Link 
-            style={{...style}}
-            className={className} 
-            href={href}
-        >
+        <Link className={className} href={href} style={{ ...style }}>
             {buttonText}
         </Link>
-    )
+    );
 }
 
 export default EventButton;

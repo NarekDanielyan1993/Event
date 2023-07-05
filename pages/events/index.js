@@ -1,42 +1,109 @@
-import React, { useState } from 'react'
-import useSWR from 'swr'
+import EventHeader from 'components/events/event-header';
+import EventList from 'components/events/event/event-list';
+import EventsSearch from 'components/events/events-search';
+import Loader from 'components/loader';
+import PageHeader from 'components/page-header';
+import { getServerSession } from 'next-auth';
+import Head from 'next/head';
+import { authOptions } from 'pages/api/auth/[...nextauth]';
+import Event from 'pages/api/events/event.model';
+import { useState } from 'react';
+import { useCreateEvent, useDeleteEvent, useUpdateEvent } from 'services/event';
+import { getFilteredEvents } from 'utils';
 
-import EventList from '../../components/events/event/event-list';
-import Head from 'next/head'
+export default function EventsPage({ eventList }) {
+    const [events, setEvents] = useState(eventList);
 
-import { base_url } from "../../constants/";
-import { getAllEvents, getFilteredEvents } from "../../dummy-data";
-import EventsSearch from '../../components/events/events-search';
+    const { isLoading, createEvent } = useCreateEvent();
 
+    const { isLoading: isUpdateLoading, updateEvent } = useUpdateEvent();
 
-export default function EventsPage(props) {
+    const { isLoading: isDeleteLoading, deleteEvent } = useDeleteEvent();
 
-    const [events, setEvents] = useState(props.events)
+    const onSearch = (date) => {
+        const updatedEvents = getFilteredEvents(date, eventList);
 
-    const onSearch = (month, year) => {
-        const updatedEvents = getFilteredEvents({year, month})
-        setEvents(updatedEvents)
-    }
-  return (
-    <div>
-        <Head>
-          <title>Explore All events</title>
-        </Head>
-        <EventsSearch onSearch={onSearch} />
-        <EventList items={events} />
-    </div>
-  )
+        setEvents(updatedEvents);
+    };
+
+    const onSubmit = async (data) => {
+        await createEvent(data, (newEvent) => {
+            setEvents((prev) => [...prev, newEvent]);
+        });
+    };
+
+    const updateEventHandler = async (id, data) => {
+        updateEvent(id, data, (updatedEvent) => {
+            setEvents((prev) =>
+                prev.map((event) =>
+                    event._id === updatedEvent._id ? updatedEvent : event
+                )
+            );
+        });
+    };
+
+    const deleteEventHandler = async (eventId) => {
+        await deleteEvent(eventId, () => {
+            setEvents((prev) => prev.filter((event) => event._id !== eventId));
+        });
+    };
+
+    const clearFilterHandler = () => {
+        setEvents(eventList);
+    };
+
+    return (
+        <div>
+            {(isLoading || isUpdateLoading || isDeleteLoading) && <Loader />}
+            <Head>
+                <title>Explore All events</title>
+            </Head>
+            <PageHeader>
+                <EventHeader onSubmit={onSubmit} setEvents={setEvents} />
+            </PageHeader>
+            <EventsSearch
+                events={eventList}
+                onClearFilter={clearFilterHandler}
+                onSearch={onSearch}
+            />
+            <EventList
+                items={events}
+                onDeleteEvent={deleteEventHandler}
+                onUpdateEvent={updateEventHandler}
+            />
+        </div>
+    );
 }
 
-export async function getStaticProps() {
-    let data = await fetch(base_url);
-    data = await data.json()
-    return { props: {
-      events: Object.keys(data).map((key) => {
-        return {
-          ...data[key],
-          id: key
+export async function getServerSideProps(context) {
+    try {
+        const session = await getServerSession(
+            context.req,
+            context.res,
+            authOptions
+        );
+        if (!session) {
+            return {
+                redirect: {
+                    destination: '/auth',
+                    permanent: false,
+                },
+            };
         }
-      })    
-    }, revalidate: 5 };
-} 
+        const data = await Event.getAllEvents();
+        return {
+            props: {
+                eventList: data,
+            },
+        };
+    } catch (error) {
+        return {
+            redirect: {
+                destination: '/500',
+                permanent: false,
+            },
+        };
+    }
+}
+
+EventsPage.auth = true;

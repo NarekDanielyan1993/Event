@@ -74,6 +74,21 @@ button {
 	outline: inherit;
 }
 
+.disabled {
+    border: 1px solid #999999!important;
+    background-color: #cccccc!important;
+    color: #666666!important;
+    cursor: not-allowed!important;
+} 
+
+.fieldErrorMessage {
+    display: inline-block;
+    color: red;
+    font-size: 12px;
+    padding-top: 9px;
+    text-align: left;  
+}
+
 .center {
   margin: 0 auto;
   text-align: center;
