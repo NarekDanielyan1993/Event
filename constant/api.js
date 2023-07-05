@@ -1,6 +1,4 @@
 export const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
-export const { API_URL_DEV } = process.env;
-export const { API_URL_PROD } = process.env;
 
 export const { MONGODB_URL } = process.env;
 
