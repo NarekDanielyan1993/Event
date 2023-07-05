@@ -15,7 +15,7 @@ export const { NODEMAILER_PROVIDER } = process.env;
 export const { NODEMAILER_EMAIL } = process.env;
 export const { NODEMAILER_PASSWORD } = process.env;
 
-export const { NEXTAUTH_SECRET } = process.env.NEXTAUTH_SECRET;
+export const { NEXTAUTH_SECRET } = process.env;
 
 export const COLLECTION_NAMES = {
     NEWSLETTER: 'newsLetter',
