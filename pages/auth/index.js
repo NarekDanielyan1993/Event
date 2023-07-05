@@ -1,6 +1,6 @@
 import AuthForm from 'components/auth/auth-form';
 import Loader from 'components/loader';
-import { AUTH_REDIRECT_PATH, METHODS } from 'constant';
+import { METHODS } from 'constant';
 import { signIn, useSession } from 'next-auth/react';
 import { useRouter } from 'next/router';
 import { useState } from 'react';
@@ -25,7 +25,6 @@ const AuthPage = () => {
     const onSignInHandler = async (formData) => {
         setIsLoading(true);
         const { error, status } = await signIn('credentials', {
-            callbackUrl: AUTH_REDIRECT_PATH,
             redirect: false,
             ...formData,
         });

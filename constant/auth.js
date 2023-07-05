@@ -1,4 +1,3 @@
-
 export const AUTH_SESSION_OPTIONS = {
     refetchInterval: 5 * 60,
     refetchOnWindowFocus: true,

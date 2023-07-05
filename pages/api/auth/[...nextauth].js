@@ -55,7 +55,10 @@ export const authOptions = {
                     throw new ValidationError('Wrong password');
                 }
 
-                return { email: currentUser.email };
+                return {
+                    email: currentUser.email,
+                    next: { redirect: '/events' },
+                };
             },
         }),
         GoogleProvider({
