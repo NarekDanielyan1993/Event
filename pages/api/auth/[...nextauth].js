@@ -20,7 +20,6 @@ export const authOptions = {
     jwt: {
         secret: NEXTAUTH_SECRET,
     },
-    debug: process.env.NODE_ENV !== 'production',
     providers: [
         CredentialsProvider({
             name: 'Credentials',
