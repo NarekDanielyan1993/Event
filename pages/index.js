@@ -20,7 +20,7 @@ export default function HomePage({ events }) {
                     isLoading={isLoading}
                 />
             </section>
-            <EventList items={events} />
+            <EventList items={events} onlyView={true} />
             {isLoading && <Loader />}
         </>
     );

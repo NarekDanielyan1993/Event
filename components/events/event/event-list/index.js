@@ -1,7 +1,7 @@
 import EventItem from './event-item';
 import StyledEventList from './style';
 
-function EventList({ items, onUpdateEvent, onDeleteEvent }) {
+function EventList({ items, onlyView, onUpdateEvent, onDeleteEvent }) {
     return (
         <StyledEventList>
             {items && items.length > 0 ? (
@@ -11,6 +11,7 @@ function EventList({ items, onUpdateEvent, onDeleteEvent }) {
                         id={item._id}
                         key={item._id}
                         onDeleteEvent={onDeleteEvent}
+                        onlyView={onlyView}
                         onUpdateEvent={onUpdateEvent}
                     />
                 ))

@@ -14,7 +14,7 @@ import {
     StyledText,
 } from './style';
 
-function EventItem({ event, id, onUpdateEvent, onDeleteEvent }) {
+function EventItem({ event, id, onUpdateEvent, onDeleteEvent, onlyView }) {
     const { title, location, date, imageId } = event;
     const [isDialogOpen, setIsDialogOpen] = useState(false);
 
@@ -37,7 +37,19 @@ function EventItem({ event, id, onUpdateEvent, onDeleteEvent }) {
             </StyledContent>
             <StyledOverlay>
                 <div className="actions">
-                    {session ? (
+                    {!session ? (
+                        <Typography
+                            sx={{
+                                textTransform: 'uppercase',
+                                color: 'white',
+                                display: 'block',
+                                width: '100%',
+                            }}
+                            textAlign="center"
+                        >
+                            Log in to explore event
+                        </Typography>
+                    ) : !onlyView ? (
                         <>
                             <Button onClick={() => setIsDialogOpen(true)}>
                                 Edit
@@ -60,17 +72,10 @@ function EventItem({ event, id, onUpdateEvent, onDeleteEvent }) {
                             />
                         </>
                     ) : (
-                        <Typography
-                            sx={{
-                                textTransform: 'uppercase',
-                                color: 'white',
-                                display: 'block',
-                                width: '100%',
-                            }}
-                            textAlign="center"
-                        >
-                            Log in to explore event
-                        </Typography>
+                        <EventButton
+                            buttonText="Detail"
+                            href={`/events/${id}`}
+                        />
                     )}
                 </div>
             </StyledOverlay>
