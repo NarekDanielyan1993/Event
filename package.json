@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "export": "next export",
-    "analyze": "next build",
+    "analyze": "cross-env ANALIZE next build",
     "lint": "eslint . --ext .js,.jsx --fix"
   },
   "dependencies": {

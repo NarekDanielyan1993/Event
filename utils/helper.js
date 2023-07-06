@@ -2,12 +2,15 @@ import { compare, hash } from 'bcryptjs';
 
 import {
     AUTH_ENCRYPTION_LENGTH,
-    BASE_URL,
     COMMON_ERROR_TYPES,
     IMAGES_PATH,
 } from 'constant';
 
 import { handleError, ValidationError } from './error-handler';
+
+export const hashPassword = async (password) => {
+    return await hash(password, AUTH_ENCRYPTION_LENGTH);
+};
 
 export const verifyPassword = async (password, hashedPassword) => {
     return await compare(password, hashedPassword);
@@ -79,11 +82,7 @@ export const transformToLocalDate = (date) =>
         year: 'numeric',
     });
 
-export const hashPassword = async (password) => {
-    return await hash(password, AUTH_ENCRYPTION_LENGTH);
-};
-
-export const loadImage = ({ src }) => `${BASE_URL}/${IMAGES_PATH}/${src}`;
+export const loadImage = ({ src }) => `/${IMAGES_PATH}/${src}`;
 
 export const getEmailContent = (
     data,
