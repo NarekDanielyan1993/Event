@@ -1,9 +1,22 @@
-module.exports = () => {
+const shouldAnalyzeBundles = process.env.ANALYZE === true;
+
+let nextConfig = () => {
     const config = {
         reactStrictMode: true,
         eslint: {
             ignoreDuringBuilds: true,
         },
+        headers: [
+            { key: 'Access-Control-Allow-Credentials', value: 'true' },
+            {
+                key: 'Access-Control-Allow-Methods',
+                value: 'GET,OPTIONS,PATCH,DELETE,POST,PUT',
+            },
+            {
+                key: 'Access-Control-Allow-Headers',
+                value: 'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version',
+            },
+        ],
         images: {
             remotePatterns: [
                 {
@@ -40,3 +53,12 @@ module.exports = () => {
 
     return config;
 };
+
+if (shouldAnalyzeBundles) {
+    const withNextBundleAnalyzer = require('next-bundle-analyzer')({
+        enabled: process.env.ANALYZE === 'true',
+    });
+    nextConfig = withNextBundleAnalyzer(nextConfig);
+}
+
+module.exports = nextConfig;
