@@ -1,8 +1,3 @@
-import {
-    GOOGLE_CLIENT_ID,
-    GOOGLE_CLIENT_SECRET,
-    NEXTAUTH_SECRET,
-} from 'constant';
 import { connectDB } from 'lib';
 import NextAuth from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
@@ -18,7 +13,7 @@ export const authOptions = {
         updateAge: 24 * 60 * 60, // 24 hours
     },
     jwt: {
-        secret: NEXTAUTH_SECRET,
+        secret: process.env.NEXTAUTH_SECRET,
     },
     providers: [
         CredentialsProvider({
@@ -61,8 +56,8 @@ export const authOptions = {
             },
         }),
         GoogleProvider({
-            clientId: GOOGLE_CLIENT_ID,
-            clientSecret: GOOGLE_CLIENT_SECRET,
+            clientId: process.env.GOOGLE_CLIENT_ID,
+            clientSecret: process.env.GOOGLE_CLIENT_SECRET,
             authorization: {
                 params: {
                     prompt: 'consent',
