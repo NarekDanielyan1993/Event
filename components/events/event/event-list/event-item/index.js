@@ -2,7 +2,7 @@ import { Button, Typography } from '@mui/material';
 import { useState } from 'react';
 
 import EventDialogCreate from 'components/events/event-create-dialog';
-import { loadImage } from 'utils';
+import { CustomDate, loadImage } from 'utils';
 
 import { useSession } from 'next-auth/react';
 import EventButton from './event-button';
@@ -32,7 +32,7 @@ function EventItem({ event, id, onUpdateEvent, onDeleteEvent, onlyView }) {
             />
             <StyledContent>
                 <StyledText component="h3">{title}</StyledText>
-                <time>{date}</time>
+                <time>{CustomDate.formatDate(date)}</time>
                 <StyledText component="address">{location}</StyledText>
             </StyledContent>
             <StyledOverlay>

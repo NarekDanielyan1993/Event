@@ -11,7 +11,7 @@ const useForm = ({ validationSchema, defaultValues }) => {
         handleSubmit,
         control,
         reset,
-        formState: { errors },
+        formState,
     } = useReactHookForm({
         mode: 'onChange',
         reValidateMode: 'onChange',
@@ -23,7 +23,7 @@ const useForm = ({ validationSchema, defaultValues }) => {
         return (
             <FormInput
                 control={control}
-                error={errors[name]?.message}
+                error={formState.errors[name]?.message}
                 label={label}
                 name={name}
                 {...rest}
@@ -38,6 +38,7 @@ const useForm = ({ validationSchema, defaultValues }) => {
         handleSubmit,
         FormField,
         reset,
+        formState,
     };
 };
 

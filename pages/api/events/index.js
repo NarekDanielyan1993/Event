@@ -25,6 +25,8 @@ const router = createRouter();
 
 router.use(dbMiddleware);
 
+router.use(authMiddleware);
+
 export const config = {
     api: {
         bodyParser: false,
@@ -33,7 +35,7 @@ export const config = {
 
 router.use(fileUploadHandler);
 
-router.get(authMiddleware, async (req, res) => {
+router.get(async (req, res) => {
     try {
         const allEvents = await Event.getAllEvents();
 
@@ -43,29 +45,28 @@ router.get(authMiddleware, async (req, res) => {
     }
 });
 
-router.post(
-    authMiddleware,
-    validateRequest(createEventValidationSchema),
-    async (req, res) => {
-        try {
-            const { id } = req.file;
+router.post(validateRequest(createEventValidationSchema), async (req, res) => {
+    try {
+        const { id } = req.file;
 
-            if (!id) {
-                throw new InternalServerError();
-            }
-
-            const newEvent = { ...req.body, imageId: id };
-
-            const createdEvent = await Event.createEvent(newEvent);
-
-            await Subscriber.sendNotification(createdEvent);
-
-            res.status(200).json({ msg: 'success', createdEvent });
-        } catch (error) {
-            handleError(error, res);
+        if (!id) {
+            throw new InternalServerError();
         }
+
+        const newEvent = {
+            ...req.body,
+            imageId: id,
+        };
+
+        const createdEvent = await Event.createEvent(newEvent);
+
+        await Subscriber.sendNotification(createdEvent);
+
+        res.status(200).json({ msg: 'success', createdEvent });
+    } catch (error) {
+        handleError(error, res);
     }
-);
+});
 
 router.put(validateRequest(updateEventValidationSchema), async (req, res) => {
     try {

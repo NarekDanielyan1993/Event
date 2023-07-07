@@ -1,10 +1,20 @@
-import { format } from 'date-fns';
+import { endOfMonth, format, isValid, parseISO, startOfMonth } from 'date-fns';
 
 import { MMMM_D_YYYY } from 'constant';
 
 export class CustomDate {
-    static toHumanReadableFormat(date) {
-        return format(date, MMMM_D_YYYY);
+    static formatDate(dateString, formatString = MMMM_D_YYYY) {
+        try {
+            if (!dateString) {
+                return;
+            }
+            if (isValid(parseISO(dateString))) {
+                return format(parseISO(dateString), formatString);
+            }
+            return dateString;
+        } catch (error) {
+            return '';
+        }
     }
 
     static timeElapsed(date) {
@@ -40,5 +50,13 @@ export class CustomDate {
         const years = Math.floor(days / 365);
 
         return `${years}y`;
+    }
+
+    static getStartOfMonth(dateString) {
+        return startOfMonth(new Date(dateString));
+    }
+
+    static getEndOfMonth(dateString) {
+        return endOfMonth(new Date(dateString));
     }
 }

@@ -8,22 +8,31 @@ import Head from 'next/head';
 import { authOptions } from 'pages/api/auth/[...nextauth]';
 import Event from 'pages/api/events/event.model';
 import { useState } from 'react';
-import { useCreateEvent, useDeleteEvent, useUpdateEvent } from 'services/event';
-import { getFilteredEvents } from 'utils';
+import {
+    useCreateEvent,
+    useDeleteEvent,
+    useFilterEvents,
+    useUpdateEvent,
+} from 'services/event';
 
 export default function EventsPage({ eventList }) {
     const [events, setEvents] = useState(eventList);
 
     const { isLoading, createEvent } = useCreateEvent();
 
+    const { isLoading: isFilterDatesLoading, getFilteredEvents } =
+        useFilterEvents();
+
     const { isLoading: isUpdateLoading, updateEvent } = useUpdateEvent();
 
     const { isLoading: isDeleteLoading, deleteEvent } = useDeleteEvent();
 
     const onSearch = (date) => {
-        const updatedEvents = getFilteredEvents(date, eventList);
-
-        setEvents(updatedEvents);
+        const date_to_string = date.toISOString();
+        console.log('date_to_string', date_to_string);
+        getFilteredEvents(date_to_string, (filteredEvents) => {
+            setEvents(filteredEvents);
+        });
     };
 
     const onSubmit = async (data) => {
@@ -54,7 +63,10 @@ export default function EventsPage({ eventList }) {
 
     return (
         <div>
-            {(isLoading || isUpdateLoading || isDeleteLoading) && <Loader />}
+            {(isLoading ||
+                isFilterDatesLoading ||
+                isUpdateLoading ||
+                isDeleteLoading) && <Loader />}
             <Head>
                 <title>Explore All events</title>
             </Head>

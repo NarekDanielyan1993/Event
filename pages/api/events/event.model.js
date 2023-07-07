@@ -1,10 +1,11 @@
 import mongoose, { Schema } from 'mongoose';
 
 import { connectDB } from 'lib';
+import { CustomDate } from 'utils';
 
 const eventSchema = new mongoose.Schema({
     date: {
-        type: String,
+        type: Date,
         required: true,
     },
     title: {
@@ -83,6 +84,23 @@ eventSchema.statics.deleteEventById = async function (id) {
         return deletedEvent;
     } catch (error) {
         console.log(error);
+        throw error;
+    }
+};
+
+eventSchema.statics.getEventsByDate = async function (dateIsoString) {
+    try {
+        await connectDB();
+
+        const startDate = CustomDate.getStartOfMonth(dateIsoString);
+        const endDate = CustomDate.getEndOfMonth(startDate);
+        const events = await this.find({
+            date: { $gte: startDate, $lte: endDate },
+        }).sort({ date: 1 });
+
+        return events;
+    } catch (error) {
+        console.log('error', error);
         throw error;
     }
 };

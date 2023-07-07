@@ -108,9 +108,9 @@ export const FILE_ERROR_TYPES = {
 export const DEFAULT_VALIDATION_ERRORS = {
     'any.required': 'Is a required field',
     'string.base': "Should be a type of 'text'",
-    'string.empty': 'Can not be an empty',
+    'string.empty': 'Is a required field',
     'string.min': 'Minimum length is required',
-    'string.email': 'Email is Required',
+    'string.email': 'Invalid email address',
     'string.pattern.base':
         'Password must contain at least one uppercase letter, one lowercase letter, one digit, and one special character.',
 };

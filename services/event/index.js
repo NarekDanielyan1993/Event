@@ -33,6 +33,33 @@ const useCreateEvent = () => {
     return { isLoading, createEvent };
 };
 
+const useFilterEvents = () => {
+    const [isLoading, setIsLoading] = useState(false);
+
+    const { showBoundary } = useErrorBoundary();
+
+    const getFilteredEvents = async (data, fn) => {
+        try {
+            setIsLoading(true);
+
+            const { data: responseData } = await apiRequest(
+                METHODS.GET,
+                `${EVENTS_PATHS.DATE_FILTER}/${data}`,
+                {
+                    'Content-Type': `multipart/form-data; boundary=${data._boundary}`,
+                }
+            );
+            fn(responseData.filteredEvents);
+        } catch (error) {
+            showBoundary(error);
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    return { isLoading, getFilteredEvents };
+};
+
 const useUpdateEvent = () => {
     const { showBoundary } = useErrorBoundary();
 
@@ -84,4 +111,4 @@ const useDeleteEvent = () => {
     return { isLoading, deleteEvent };
 };
 
-export { useCreateEvent, useDeleteEvent, useUpdateEvent };
+export { useCreateEvent, useDeleteEvent, useFilterEvents, useUpdateEvent };

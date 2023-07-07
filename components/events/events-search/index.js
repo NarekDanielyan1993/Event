@@ -3,28 +3,29 @@ import useForm from 'hooks/useForm';
 
 import validationSchema from './validationSchema';
 
-import { useTheme } from '@emotion/react';
-import { Button } from '@mui/material';
 import SubmitButton from 'components/button/submit-button';
-import { FormContainer } from './style';
+import { isValidDateObject } from 'utils';
+import { FormContainer, StyledButton } from './style';
 
 function EventsSearch({ onSearch, onClearFilter }) {
     const onFilterEventsHandler = (data) => {
         onSearch(data.date);
     };
 
-    const theme = useTheme();
-
-    const { handleSubmit, FormField, setValue } = useForm({
+    const { handleSubmit, FormField, watch, setValue } = useForm({
         validationSchema,
         defaultValues: {
-            date: null,
+            date: {},
         },
     });
 
+    const date = watch('date');
+    console.log('date', date);
+    console.log('date', typeof date);
+
     const clearFilter = () => {
         onClearFilter();
-        setValue('date', null);
+        setValue('date', {});
     };
 
     return (
@@ -36,17 +37,20 @@ function EventsSearch({ onSearch, onClearFilter }) {
                 views: ['year', 'month'],
                 format: MM_YYYY,
             })}
-            <SubmitButton type="submit">Find Events</SubmitButton>
-            <Button
+            <SubmitButton
+                disabled={isValidDateObject(date)}
+                sx={{ flexGrow: 1, minWidth: '150px' }}
+                type="submit"
+            >
+                Find Events
+            </SubmitButton>
+            <StyledButton
+                disabled={isValidDateObject(date)}
                 onClick={clearFilter}
-                sx={{
-                    width: '200px',
-                    backgroundColor: theme.palette.background.secondary,
-                }}
                 variant="contained"
             >
                 Clear filters
-            </Button>
+            </StyledButton>
         </FormContainer>
     );
 }

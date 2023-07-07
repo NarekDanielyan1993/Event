@@ -1,12 +1,15 @@
 import { Button } from '@mui/material';
 import { styled } from '@mui/system';
 
-export const StyledEventCommentContainer = styled('div')(() => ({
-    width: '40%',
+export const StyledEventCommentContainer = styled('div')(({ theme }) => ({
+    width: '50%',
     margin: '50px auto 0',
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
+    [theme.breakpoints.down('md')]: {
+        width: '98%',
+    },
 }));
 
 export const StyledEventButton = styled(Button)(() => ({

@@ -1,45 +1,17 @@
-import { signOut, useSession } from 'next-auth/react';
-import Link from 'next/link';
-import {
-    StyledButton,
-    StyledLink,
-    StyledMainHeader,
-    StyledNav,
-    StyledRightSide,
-} from './style';
+import DesktopMenu from 'components/app-menu/desktop-menu';
+import { MobileMenu } from 'components/app-menu/mobile-menu';
+import { signOut } from 'next-auth/react';
+import { StyledMainHeader } from './style';
 
 function MainHeader() {
     const onLogoutHandler = () => {
         signOut({ callbackUrl: '/auth' });
     };
 
-    const { data: session } = useSession();
-
     return (
         <StyledMainHeader>
-            <StyledNav>
-                {session && (
-                    <Link href={'/'} passHref>
-                        <StyledLink>NEXT EVENTS</StyledLink>
-                    </Link>
-                )}
-                <StyledRightSide>
-                    {session && (
-                        <Link href="/events" passHref>
-                            <StyledLink>All events</StyledLink>
-                        </Link>
-                    )}
-                    {session ? (
-                        <StyledButton onClick={onLogoutHandler}>
-                            Log out
-                        </StyledButton>
-                    ) : (
-                        <Link href="/auth" passHref>
-                            <StyledLink>Log in</StyledLink>
-                        </Link>
-                    )}
-                </StyledRightSide>
-            </StyledNav>
+            <DesktopMenu onLogout={onLogoutHandler} />
+            <MobileMenu onLogout={onLogoutHandler} />
         </StyledMainHeader>
     );
 }

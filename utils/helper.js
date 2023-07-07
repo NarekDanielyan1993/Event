@@ -1,12 +1,19 @@
 import { compare, hash } from 'bcryptjs';
-
 import {
     AUTH_ENCRYPTION_LENGTH,
     COMMON_ERROR_TYPES,
     IMAGES_PATH,
 } from 'constant';
+const { isValid } = require('date-fns');
 
 import { handleError, ValidationError } from './error-handler';
+
+export const isValidDateObject = (obj) => {
+    if (!isValid(obj)) {
+        return true;
+    }
+    return false;
+};
 
 export const hashPassword = async (password) => {
     return await hash(password, AUTH_ENCRYPTION_LENGTH);

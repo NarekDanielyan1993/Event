@@ -114,26 +114,28 @@ function FormInput({
                 <Controller
                     control={control}
                     name={name}
-                    render={({ field: { value, onChange } }) => (
-                        <DatePicker
-                            disablePast
-                            format={dateFormat}
-                            onChange={onChange}
-                            slotProps={{
-                                textField: {
-                                    ...defaultOptions,
-                                    ...rest,
-                                    inputProps: {
-                                        readOnly: true,
+                    render={({ field: { value, onChange } }) => {
+                        return (
+                            <DatePicker
+                                disablePast
+                                format={dateFormat}
+                                onChange={onChange}
+                                slotProps={{
+                                    textField: {
+                                        ...defaultOptions,
+                                        ...rest,
+                                        inputProps: {
+                                            readOnly: true,
+                                        },
                                     },
-                                },
-                            }}
-                            {...rest}
-                            sx={{ ...styleMuiTextField(theme) }}
-                            value={value}
-                            views={views}
-                        />
-                    )}
+                                }}
+                                {...rest}
+                                sx={{ ...styleMuiTextField(theme) }}
+                                value={value}
+                                views={views}
+                            />
+                        );
+                    }}
                 />
             );
         case 'file':
