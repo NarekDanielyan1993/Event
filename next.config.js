@@ -17,12 +17,18 @@ let nextConfig = () => {
             ],
         },
         pageExtensions: ['mdx', 'md', 'jsx', 'js', 'tsx', 'ts', 'mjs'],
-        webpack: (config, { webpack }) => {
+        webpack: (config, { webpack, isServer }) => {
             config.module.rules.push({
                 test: /\.mjs$/,
                 include: /node_modules/,
                 type: 'javascript/auto',
             });
+
+            if (!isServer) {
+                config.resolve.fallback = {
+                    fs: false,
+                };
+            }
 
             // Ignore 'fs' and 'child_process' modules in client-side builds
             if (!config.plugins) {

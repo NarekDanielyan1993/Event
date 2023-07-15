@@ -63,7 +63,7 @@ function EventItem({ event, id, onUpdateEvent, onDeleteEvent, onlyView }) {
                             <EventDialogCreate
                                 isOpen={isDialogOpen}
                                 onClose={() => setIsDialogOpen(false)}
-                                onSubmit={onUpdateEvent}
+                                onEdit={onUpdateEvent}
                                 propData={event}
                             />
                             <EventButton

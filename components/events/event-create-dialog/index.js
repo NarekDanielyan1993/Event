@@ -6,15 +6,13 @@ import {
     DialogTitle,
     Grid,
 } from '@mui/material';
-import { format } from 'date-fns';
 import { useMemo } from 'react';
 
-import { MM_DD_YYYY } from 'constant';
 import useForm from 'hooks/useForm';
 
 import validationSchema from './validationSchema';
 
-function EventDialogCreate({ isOpen, onSubmit, onClose, propData }) {
+function EventDialogCreate({ isOpen, onCreate, onEdit, onClose, propData }) {
     const defaultValues = useMemo(() => {
         if (propData) {
             const { title, location, date, description } = propData;
@@ -47,17 +45,10 @@ function EventDialogCreate({ isOpen, onSubmit, onClose, propData }) {
     };
 
     const formSubmitHandler = async (data) => {
-        const formData = new FormData();
-
-        formData.append('title', data.title);
-        formData.append('description', data.description);
-        formData.append('location', data.location);
-        formData.append('date', format(data.date, MM_DD_YYYY));
-        formData.append('file', data.file);
         if (propData) {
-            await onSubmit(propData._id, formData);
+            await onEdit(propData._id, data);
         } else {
-            await onSubmit(formData);
+            await onCreate(data);
         }
         handleClose();
     };

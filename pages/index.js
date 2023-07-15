@@ -1,8 +1,7 @@
 import EventList from 'components/events/event/event-list';
-import Loader from 'components/loader/index';
+import Loader from 'components/loader';
 import NewsLetter from 'components/news-letter';
 import useRegisterMailForNews from 'services/news-letter';
-
 import Event from './api/events/event.model';
 
 export default function HomePage({ events }) {
@@ -29,7 +28,6 @@ export default function HomePage({ events }) {
 export async function getServerSideProps() {
     try {
         const events = await Event.getUpcamingEvents();
-
         return {
             props: {
                 events,

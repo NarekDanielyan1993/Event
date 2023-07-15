@@ -5,7 +5,7 @@ import EventDialogCreate from '../event-create-dialog';
 
 import { StyledEventHeader } from './style';
 
-function EventHeader({ onSubmit }) {
+function EventHeader({ onCreateEvent }) {
     const [isDialogOpened, setIsDialogOpened] = useState(false);
 
     return (
@@ -17,7 +17,7 @@ function EventHeader({ onSubmit }) {
                 <EventDialogCreate
                     isOpen={isDialogOpened}
                     onClose={() => setIsDialogOpened(false)}
-                    onSubmit={onSubmit}
+                    onCreate={onCreateEvent}
                     propData={undefined}
                 />
             )}

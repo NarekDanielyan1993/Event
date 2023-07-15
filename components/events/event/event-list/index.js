@@ -4,7 +4,7 @@ import StyledEventList from './style';
 function EventList({ items, onlyView, onUpdateEvent, onDeleteEvent }) {
     return (
         <StyledEventList>
-            {items && items.length > 0 ? (
+            {Array.isArray(items) && items.length > 0 ? (
                 items.map((item) => (
                     <EventItem
                         event={item}

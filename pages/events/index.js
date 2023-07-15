@@ -34,14 +34,26 @@ export default function EventsPage({ eventList }) {
         });
     };
 
-    const onSubmit = async (data) => {
-        await createEvent(data, (newEvent) => {
+    const createEventHandler = async (data) => {
+        const formData = new FormData();
+        formData.append('title', data.title);
+        formData.append('description', data.description);
+        formData.append('location', data.location);
+        formData.append('date', data.date);
+        formData.append('file', data.file);
+        await createEvent(formData, (newEvent) => {
             setEvents((prev) => [...prev, newEvent]);
         });
     };
 
     const updateEventHandler = async (id, data) => {
-        updateEvent(id, data, (updatedEvent) => {
+        const formData = new FormData();
+        formData.append('title', data.title);
+        formData.append('description', data.description);
+        formData.append('location', data.location);
+        formData.append('date', data.date);
+        formData.append('file', data.file);
+        updateEvent(id, formData, (updatedEvent) => {
             setEvents((prev) =>
                 prev.map((event) =>
                     event._id === updatedEvent._id ? updatedEvent : event
@@ -70,7 +82,10 @@ export default function EventsPage({ eventList }) {
                 <title>Explore All events</title>
             </Head>
             <PageHeader>
-                <EventHeader onSubmit={onSubmit} setEvents={setEvents} />
+                <EventHeader
+                    onCreateEvent={createEventHandler}
+                    setEvents={setEvents}
+                />
             </PageHeader>
             <EventsSearch
                 events={eventList}
