@@ -1,40 +1,27 @@
 import Loader from 'components/loader';
+import UnsubscibeCard from 'components/news-letter/unsubscribe';
 import { useRouter } from 'next/router';
-import { useUnsubcribeFromEmail } from 'services';
-import {
-    StyledUnsubscribeButton,
-    StyledUnsubscribeContainer,
-    StyledUnsubscribeHeader,
-    StyledUnsubscribeText,
-} from './style';
+import { useUnsubscribeFromEmail } from 'services';
 
-const Unsubscribe = () => {
-    const { unsubcribeFromEmail, isLoading } = useUnsubcribeFromEmail();
-    const router = useRouter();
-    const { email } = router.query;
+export default function Unsubscribe() {
+    const { unsubscribeFromEmail, isLoading } = useUnsubscribeFromEmail();
+    const { query } = useRouter();
+    const { email } = query;
 
     const unsubscribeFormEmailHandler = async (email) => {
-        await unsubcribeFromEmail({ email });
+        await unsubscribeFromEmail({ email });
     };
 
     return (
-        <StyledUnsubscribeContainer>
+        <>
             {isLoading ? <Loader /> : null}
-            <StyledUnsubscribeHeader>UNSUBSCRIBE</StyledUnsubscribeHeader>
-            <StyledUnsubscribeText>
-                By clicking the Unsubscribe button, you will no longer receive
-                notifications from the sender. We appreciate your previous
-                engagement and respect your decision to opt-out. Thank you.
-            </StyledUnsubscribeText>
-            <StyledUnsubscribeButton
-                onClick={() => unsubscribeFormEmailHandler(email)}
-            >
-                Unsubscribe
-            </StyledUnsubscribeButton>
-        </StyledUnsubscribeContainer>
+            <UnsubscibeCard
+                onUnsubscribeFromEmail={() =>
+                    unsubscribeFormEmailHandler(email)
+                }
+            />
+        </>
     );
-};
-
-export default Unsubscribe;
+}
 
 Unsubscribe.layout = ({ children }) => <>{children}</>;

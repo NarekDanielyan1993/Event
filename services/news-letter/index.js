@@ -34,14 +34,14 @@ const useRegisterMailForNews = () => {
     return { isLoading, registerMailForNews };
 };
 
-export const useUnsubcribeFromEmail = () => {
+export const useUnsubscribeFromEmail = () => {
     const [isLoading, setIsLoading] = useState(false);
 
     const { showBoundary } = useErrorBoundary();
 
     const { enqueueSnackbar } = useSnackbar();
 
-    const unsubcribeFromEmail = async (data) => {
+    const unsubscribeFromEmail = async (data) => {
         try {
             setIsLoading(true);
             await apiRequest(
@@ -62,7 +62,7 @@ export const useUnsubcribeFromEmail = () => {
         }
     };
 
-    return { isLoading, unsubcribeFromEmail };
+    return { isLoading, unsubscribeFromEmail };
 };
 
 export default useRegisterMailForNews;
