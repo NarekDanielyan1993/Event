@@ -8,3 +8,10 @@ export const newsLetterValidationSchema = Joi.object({
         .required()
         .messages(DEFAULT_VALIDATION_ERRORS),
 });
+
+export const newsLetterDeleteValidationSchema = Joi.object({
+    email: Joi.string()
+        .email({ tlds: { allow: false } })
+        .required()
+        .messages(DEFAULT_VALIDATION_ERRORS),
+});

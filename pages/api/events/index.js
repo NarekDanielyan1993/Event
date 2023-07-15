@@ -1,11 +1,11 @@
 import { createRouter } from 'next-connect';
 
-import { COMMON_ERROR_TYPES } from 'constant';
-import { deleteImageFromStorage, fileUploadHandler } from 'lib';
+import { COMMON_ERROR_TYPES, FILE_ERROR_TYPES } from 'constant';
+import { fileUploadMiddleware } from 'lib';
 import { dbMiddleware } from 'lib/middlewares';
 
 import {
-    ForbiddenError,
+    FileError,
     handleError,
     InternalServerError,
     validateRequest,
@@ -14,6 +14,7 @@ import {
 import Comment from '../comments/comment.model';
 import Subscriber from '../news-letter/news-letter.model';
 
+import AWSService from 'lib/aws-service';
 import { authMiddleware } from 'lib/middlewares/auth';
 import Event from './event.model';
 import {
@@ -33,8 +34,6 @@ export const config = {
     },
 };
 
-router.use(fileUploadHandler);
-
 router.get(async (req, res) => {
     try {
         const allEvents = await Event.getAllEvents();
@@ -45,59 +44,75 @@ router.get(async (req, res) => {
     }
 });
 
-router.post(validateRequest(createEventValidationSchema), async (req, res) => {
-    try {
-        const { id } = req.file;
+router.post(
+    fileUploadMiddleware,
+    validateRequest(createEventValidationSchema),
+    async (req, res) => {
+        try {
+            const { file } = req;
 
-        if (!id) {
-            throw new InternalServerError();
+            if (!file) {
+                throw new FileError(
+                    FILE_ERROR_TYPES.NO_FILE_FOUND.msg,
+                    FILE_ERROR_TYPES.NO_FILE_FOUND.status
+                );
+            }
+
+            const newEvent = {
+                ...req.body,
+                imageId: file.newFilename,
+            };
+
+            const createdEvent = await Event.createEvent(newEvent);
+
+            await Subscriber.sendNotification(createdEvent);
+
+            res.status(200).json({ msg: 'success', createdEvent });
+        } catch (error) {
+            handleError(error, res);
         }
-
-        const newEvent = {
-            ...req.body,
-            imageId: id,
-        };
-
-        const createdEvent = await Event.createEvent(newEvent);
-
-        await Subscriber.sendNotification(createdEvent);
-
-        res.status(200).json({ msg: 'success', createdEvent });
-    } catch (error) {
-        handleError(error, res);
     }
-});
+);
 
-router.put(validateRequest(updateEventValidationSchema), async (req, res) => {
-    try {
-        const { id } = req.query;
+router.put(
+    fileUploadMiddleware,
+    validateRequest(updateEventValidationSchema),
+    async (req, res) => {
+        try {
+            const { id } = req.query;
 
-        if (!id) {
-            throw new ForbiddenError();
+            if (!id) {
+                throw new InternalServerError();
+            }
+
+            const { file } = req;
+
+            if (!file) {
+                throw new FileError(
+                    FILE_ERROR_TYPES.NO_FILE_FOUND.msg,
+                    FILE_ERROR_TYPES.NO_FILE_FOUND.status
+                );
+            }
+
+            const currentEvent = await Event.getEventById(id);
+
+            const dataToUpdate = { ...req.body, imageId: file.newFilename };
+
+            const updatedEvent = await Event.updateEvent(id, dataToUpdate, {
+                upsert: true,
+            });
+
+            const awsService = new AWSService();
+            await awsService.deleteFile(currentEvent.imageId);
+
+            res.status(200).json({ msg: 'success', updatedEvent });
+        } catch (error) {
+            handleError(error, res);
         }
-        const fileId = req.file.id;
-
-        if (!fileId) {
-            throw new InternalServerError();
-        }
-
-        const currentEvent = await Event.getEventById(id);
-
-        const dataToUpdate = { ...req.body, imageId: fileId };
-
-        const updatedEvent = await Event.updateEvent(id, dataToUpdate, {
-            upsert: true,
-        });
-
-        await deleteImageFromStorage(currentEvent.imageId);
-
-        res.status(200).json({ msg: 'success', updatedEvent });
-    } catch (error) {
-        handleError(error, res);
     }
-});
+);
 
-router.delete(authMiddleware, async (req, res) => {
+router.delete(async (req, res) => {
     try {
         const { id } = req.query;
 
@@ -109,7 +124,8 @@ router.delete(authMiddleware, async (req, res) => {
 
         await Comment.deleteCommentsByEvent(deletedEvent._id);
 
-        await deleteImageFromStorage(deletedEvent.imageId);
+        const awsService = new AWSService();
+        await awsService.deleteFile(deletedEvent.imageId);
 
         res.status(200).json({ msg: 'success' });
     } catch (error) {

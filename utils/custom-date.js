@@ -9,7 +9,9 @@ export class CustomDate {
                 return;
             }
             if (isValid(parseISO(dateString))) {
-                return format(parseISO(dateString), formatString);
+                return format(parseISO(dateString), formatString, {
+                    locale: 'enUS',
+                });
             }
             return dateString;
         } catch (error) {

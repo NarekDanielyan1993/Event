@@ -99,13 +99,13 @@ export class InternalServerError extends Error {
     }
 }
 
-export class MulterError extends HttpError {
+export class FileError extends HttpError {
     constructor(message, status) {
         super(
-            message || COMMON_ERROR_TYPES.MULTER_ERROR.msg,
-            status || COMMON_ERROR_TYPES.MULTER_ERROR.status,
-            COMMON_ERROR_TYPES.MULTER_ERROR.name,
-            COMMON_ERROR_TYPES.MULTER_ERROR.title
+            message || COMMON_ERROR_TYPES.FILE_ERROR.msg,
+            status || COMMON_ERROR_TYPES.FILE_ERROR.status,
+            COMMON_ERROR_TYPES.FILE_ERROR.name,
+            COMMON_ERROR_TYPES.FILE_ERROR.title
         );
     }
 }
@@ -129,7 +129,7 @@ export class ErrorHandler {
             case COMMON_ERROR_TYPES.UNAUTHORIZED.name: {
                 return ErrorHandler.handleUnauthorized(error, message, status);
             }
-            case COMMON_ERROR_TYPES.MULTER_ERROR.name: {
+            case COMMON_ERROR_TYPES.FILE_ERROR.name: {
                 return ErrorHandler.handleMulterError(error, message, status);
             }
             case COMMON_ERROR_TYPES.MONGO_ERROR.name: {
@@ -205,18 +205,18 @@ export class ErrorHandler {
 
     static handleMulterError(err, message, status) {
         if (err.code === FILE_ERROR_TYPES.LIMIT_FILE_SIZE.name) {
-            return new MulterError(
+            return new FileError(
                 FILE_ERROR_TYPES.LIMIT_FILE_SIZE.msg,
                 FILE_ERROR_TYPES.LIMIT_FILE_SIZE.status
             );
         }
 
-        const multerError = new MulterError(
+        const fileError = new FileError(
             message || err?.msg,
             status || err?.status
         );
 
-        return multerError;
+        return fileError;
     }
 }
 

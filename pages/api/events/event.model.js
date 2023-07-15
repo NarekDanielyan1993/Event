@@ -1,4 +1,4 @@
-import mongoose, { Schema } from 'mongoose';
+import mongoose from 'mongoose';
 
 import { connectDB } from 'lib';
 import { CustomDate } from 'utils';
@@ -13,7 +13,7 @@ const eventSchema = new mongoose.Schema({
         required: true,
     },
     imageId: {
-        type: Schema.Types.ObjectId,
+        type: String,
         required: true,
     },
     description: {
@@ -26,54 +26,77 @@ const eventSchema = new mongoose.Schema({
     },
 });
 
-eventSchema.statics.getAllEvents = async function getAllEvents() {
-    await connectDB();
-    const event = await this.find();
+eventSchema.statics.getAllEvents = async function () {
+    try {
+        await connectDB();
+        const events = await this.find();
 
-    return JSON.parse(JSON.stringify(event));
+        return JSON.parse(JSON.stringify(events));
+    } catch (err) {
+        console.error('Error accured while retrieving all events');
+        throw err;
+    }
 };
 
 eventSchema.statics.getEventById = async function getEventById(id) {
-    await connectDB();
-    const eventById = await this.findById(id);
+    try {
+        await connectDB();
+        const event = await this.findById(id);
 
-    return JSON.parse(JSON.stringify(eventById));
+        return JSON.parse(JSON.stringify(event));
+    } catch (err) {
+        console.error('Error accured while getting event');
+        throw err;
+    }
 };
 
-eventSchema.statics.getUpcamingEvents = async function getUpcamingEvents() {
-    await connectDB();
-    const events = await this.find().limit(3).sort({ date: 1 });
+eventSchema.statics.getUpcamingEvents = async function () {
+    try {
+        await connectDB();
+        const events = await this.find().limit(3).sort({ date: 1 }).lean();
 
-    return JSON.parse(JSON.stringify(events));
+        return JSON.parse(JSON.stringify(events));
+    } catch (error) {
+        console.error('Error accured while getting upcaming events');
+        throw error;
+    }
 };
 
-eventSchema.statics.createEvent = async function createEvent(eventData = {}) {
-    await connectDB();
+eventSchema.statics.createEvent = async function (eventData = {}) {
+    try {
+        await connectDB();
 
-    return this.create(eventData);
+        return this.create(eventData);
+    } catch (error) {
+        console.error('Error accured while creating event');
+        throw error;
+    }
 };
 
-eventSchema.statics.createMultipleEvents = async function createMultipleEvents(
-    eventData = []
-) {
-    await connectDB();
-    const createdEvent = await this.create(eventData);
+eventSchema.statics.createMultipleEvents = async function (eventData = []) {
+    try {
+        await connectDB();
+        const createdEvent = await this.create(eventData);
 
-    return createdEvent;
+        return createdEvent;
+    } catch (error) {
+        console.error('Error accured while creating events');
+        throw error;
+    }
 };
 
-eventSchema.statics.updateEvent = async function updateEvent(
-    id,
-    eventData,
-    options
-) {
-    await connectDB();
-    const updatedEvent = await this.findByIdAndUpdate(id, eventData, {
-        new: true,
-        ...options,
-    });
-
-    return updatedEvent;
+eventSchema.statics.updateEvent = async function (id, eventData, options) {
+    try {
+        await connectDB();
+        const updatedEvent = await this.findByIdAndUpdate(id, eventData, {
+            new: true,
+            ...options,
+        });
+        return updatedEvent;
+    } catch (error) {
+        console.error('Error accured while updating events');
+        throw error;
+    }
 };
 
 eventSchema.statics.deleteEventById = async function (id) {

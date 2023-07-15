@@ -13,3 +13,5 @@ const Error500Page = () => {
 };
 
 export default Error500Page;
+
+Error500Page.layout = ({ children }) => <>{children}</>;

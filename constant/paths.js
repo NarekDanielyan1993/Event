@@ -6,6 +6,7 @@ export const EVENTS_PATHS = {
 
 export const NEWS_LETTER_PATHS = {
     NEWS_LETTER: 'api/news-letter',
+    UNSUBSCRIBE: 'api/news-letter',
 };
 
 export const IMAGES_PATH = 'api/images';

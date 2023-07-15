@@ -1,7 +1,7 @@
 import { styled } from '@mui/system';
 
 export const StyledNewsLetterContainer = styled('section')({
-    maxWidth: '500px',
+    maxWidth: '400px',
     width: '100%',
     margin: '30px auto 20px',
 });

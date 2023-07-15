@@ -29,7 +29,6 @@ export default function EventsPage({ eventList }) {
 
     const onSearch = (date) => {
         const date_to_string = date.toISOString();
-        console.log('date_to_string', date_to_string);
         getFilteredEvents(date_to_string, (filteredEvents) => {
             setEvents(filteredEvents);
         });

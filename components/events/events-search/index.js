@@ -20,8 +20,6 @@ function EventsSearch({ onSearch, onClearFilter }) {
     });
 
     const date = watch('date');
-    console.log('date', date);
-    console.log('date', typeof date);
 
     const clearFilter = () => {
         onClearFilter();

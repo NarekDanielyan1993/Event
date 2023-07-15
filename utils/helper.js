@@ -1,12 +1,19 @@
 import { compare, hash } from 'bcryptjs';
 import {
+    ALLOWED_FILE_TYPES,
     AUTH_ENCRYPTION_LENGTH,
     COMMON_ERROR_TYPES,
+    EVENT_ROUTES,
     IMAGES_PATH,
+    NEWS_LETTER_ROUTES,
 } from 'constant';
 const { isValid } = require('date-fns');
 
 import { handleError, ValidationError } from './error-handler';
+
+export const isAllowedFileType = (fileType) => {
+    return ALLOWED_FILE_TYPES.includes(fileType.mimetype);
+};
 
 export const isValidDateObject = (obj) => {
     if (!isValid(obj)) {
@@ -92,11 +99,19 @@ export const transformToLocalDate = (date) =>
 export const loadImage = ({ src }) => `/${IMAGES_PATH}/${src}`;
 
 export const getEmailContent = (
-    data,
-    location
+    date,
+    location,
+    eventId,
+    email
 ) => `Hi, I hope you’re having a great day! I’m glad to see you’re interested in our upcoming event.
 I wanted to introduce myself and let you know more about us.
-My name is Narek, and I would like to let you know about an upcoming event on ${data} taking place at ${location}. 
-You can use the following link to learn more about the event.`;
+My name is Narek, and I would like to let you know about an upcoming event on <b>${date}</b> taking place at <b>${location}</b>. 
+You can use the following link to learn more about the event: <a href=${EVENT_ROUTES.EVENT_REDIRECTION_FROM_EMAIL(
+    eventId
+)} target=_blank>Explore event</a>
+To unsubscribe, please click the following link: <a href="${NEWS_LETTER_ROUTES.UNSUBSCRIBE(
+    email
+)}" target="_blank">Unsubscribe<a/>
+`;
 
 export const getEmailSubject = () => 'Upcaming event';

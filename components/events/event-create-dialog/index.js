@@ -53,7 +53,7 @@ function EventDialogCreate({ isOpen, onSubmit, onClose, propData }) {
         formData.append('description', data.description);
         formData.append('location', data.location);
         formData.append('date', format(data.date, MM_DD_YYYY));
-        formData.append('image', data.file);
+        formData.append('file', data.file);
         if (propData) {
             await onSubmit(propData._id, formData);
         } else {

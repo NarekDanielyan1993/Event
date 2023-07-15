@@ -44,7 +44,7 @@ export const COMMON_ERROR_TYPES = {
         name: 'InternalServerError',
         title: 'Internal Server Error',
     },
-    MULTER_ERROR: {
+    FILE_ERROR: {
         msg: 'An unexpected error occurred during file upload. Please try again later.',
         status: 500,
         name: 'MulterError',

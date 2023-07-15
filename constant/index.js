@@ -4,4 +4,5 @@ export * from './date';
 export * from './errors';
 export * from './image';
 export * from './paths';
+export * from './routes';
 

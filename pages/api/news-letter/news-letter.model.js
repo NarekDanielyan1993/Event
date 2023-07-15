@@ -1,4 +1,3 @@
-/* eslint-disable consistent-return */
 import mongoose from 'mongoose';
 import nodemailer from 'nodemailer';
 
@@ -8,7 +7,12 @@ import {
     NODEMAILER_PROVIDER,
 } from 'constant';
 import { connectDB } from 'lib';
-import { getEmailContent, getEmailSubject, handleError } from 'utils';
+import {
+    CustomDate,
+    getEmailContent,
+    getEmailSubject,
+    handleError,
+} from 'utils';
 
 const subscribersSchema = new mongoose.Schema({
     email: {
@@ -19,6 +23,7 @@ const subscribersSchema = new mongoose.Schema({
 
 subscribersSchema.statics.sendNotification = async function (event) {
     try {
+        await connectDB();
         const transporter = nodemailer.createTransport({
             service: NODEMAILER_PROVIDER,
             secure: true,
@@ -29,42 +34,58 @@ subscribersSchema.statics.sendNotification = async function (event) {
         });
 
         let subscriptions = await this.find();
-
         subscriptions = subscriptions.map((item) => item.email);
-
         if (Array.isArray(subscriptions) && subscriptions.length > 0) {
             const emailPromises = subscriptions.map((recipient) =>
                 transporter.sendMail({
                     from: process.env.NODEMAILER_EMAIL,
                     to: recipient,
                     subject: getEmailSubject(),
-                    text: getEmailContent(event.date, event.location),
+                    html: getEmailContent(
+                        CustomDate.formatDate(event.date),
+                        event.location,
+                        event._id,
+                        recipient
+                    ),
                 })
             );
 
             await Promise.all(emailPromises);
         }
     } catch (error) {
-        console.error('An error occurred while sending the email to :', error);
+        console.error(
+            'An error occurred while sending the email to : <a href=`${eventLink}`></a>',
+            error
+        );
         throw error;
     }
 };
 
-subscribersSchema.statics.storeEmail = async function (data, res) {
+subscribersSchema.statics.storeEmail = async function (data) {
     try {
         await connectDB();
         const newSubscription = await this.create(data);
 
         return newSubscription;
     } catch (error) {
-        handleError(error, res);
+        console.error('Error accured while unsubscribing from email.');
+        throw error;
     }
 };
 
-// eslint-disable-next-line consistent-return
-subscribersSchema.statics.getAllSubscribers = async function getAllSubscribers(
-    res
-) {
+subscribersSchema.statics.deleteEmail = async function (email) {
+    try {
+        await connectDB();
+        const deletedSubscriptionEmail = await this.deleteMany({ email });
+
+        return deletedSubscriptionEmail;
+    } catch (error) {
+        console.error('Error accured while unsubscribing from email.');
+        throw error;
+    }
+};
+
+subscribersSchema.statics.getAllSubscribers = async function (res) {
     try {
         await connectDB();
         const subscriptions = await this.find({}, 'email');
@@ -72,6 +93,17 @@ subscribersSchema.statics.getAllSubscribers = async function getAllSubscribers(
         return subscriptions;
     } catch (error) {
         handleError(error, res);
+    }
+};
+
+subscribersSchema.statics.getSubscriber = async function (email) {
+    try {
+        await connectDB();
+        const subscriber = await this.findOne({ email });
+        return subscriber;
+    } catch (error) {
+        console.error('Error accured while geting email');
+        throw error;
     }
 };
 
