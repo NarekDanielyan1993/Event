@@ -53,7 +53,7 @@ eventSchema.statics.getEventById = async function getEventById(id) {
 eventSchema.statics.getUpcamingEvents = async function () {
     try {
         await connectDB();
-        const events = await this.find().limit(3).sort({ date: 1 }).lean();
+        const events = await this.find().limit(3).sort({ date: 1 });
 
         return JSON.parse(JSON.stringify(events));
     } catch (error) {
