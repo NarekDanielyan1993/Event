@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const api = axios.create({
-    timeout: 50000,
+    timeout: 20000,
 });
 
 export const apiRequest = (
