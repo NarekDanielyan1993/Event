@@ -9,25 +9,41 @@ import Loader from 'components/loader';
 import NotFound from 'components/not-found';
 import { getServerSession } from 'next-auth';
 import { authOptions } from 'pages/api/auth/[...nextauth]';
-import Comment from 'pages/api/comments/comment.model';
 import Event from 'pages/api/events/event.model';
 import {
     useCreateComment,
     useDeleteComment,
+    useGetComments,
     useUpdateComment,
 } from 'services/comment';
 
-export default function EventDetailPage({ event, comments }) {
-    const [commentList, setCommentList] = useState(comments || []);
+export default function EventDetailPage({ event }) {
+    const [commentList, setCommentList] = useState([]);
+
+    const [showComments, setShowComments] = useState(false);
 
     const { isLoading: isCreateCommentLoading, createComment } =
         useCreateComment();
+
+    const {
+        isLoading: isCommentsLoading,
+        getComments,
+        isFetched: isCommentsFetched,
+    } = useGetComments();
 
     const { isLoading: isUpdateCommentLoading, updateComment } =
         useUpdateComment();
 
     const { isLoading: isDeleteCommentLoading, deleteComment } =
         useDeleteComment();
+
+    const getCommentsHandler = async () => {
+        if (!isCommentsFetched) {
+            const allComments = await getComments(event._id);
+            setCommentList(allComments);
+        }
+        setShowComments((prev) => !prev);
+    };
 
     const onSubmit = async (data) => {
         const finalData = { ...data };
@@ -66,7 +82,8 @@ export default function EventDetailPage({ event, comments }) {
         <>
             {(isCreateCommentLoading ||
                 isDeleteCommentLoading ||
-                isUpdateCommentLoading) && <Loader />}
+                isUpdateCommentLoading ||
+                isCommentsLoading) && <Loader />}
             <Head>
                 <title>Explore event in detail</title>
             </Head>
@@ -84,9 +101,12 @@ export default function EventDetailPage({ event, comments }) {
                     <EventContent>{event.description}</EventContent>
                     <EventComments
                         comments={commentList}
+                        isCommentsFetched={isCommentsFetched}
                         onDeleteComments={deleteComments}
+                        onGetComments={getCommentsHandler}
                         onSubmit={onSubmit}
                         onUpdateComments={updateComments}
+                        showComments={showComments}
                     />
                 </>
             ) : (
@@ -111,12 +131,9 @@ export async function getServerSideProps(ctx) {
         }
         const event = await Event.getEventById(id);
 
-        const comments = await Comment.getCommentsByEvent(id);
-
         return {
             props: {
                 event,
-                comments,
             },
         };
     } catch (error) {

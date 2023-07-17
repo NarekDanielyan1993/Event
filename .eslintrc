@@ -43,6 +43,7 @@
     "react/react-in-jsx-scope": "off",
     "jsx-a11y/href-no-hash": [0],
     "react/display-name": 0,
+    "react/jsx-curly-brace-presence": ["error", "never"],
     "no-useless-computed-key":"error",
     "react/no-deprecated": "error",
     "react/no-unsafe": ["error", { "checkAliases": true }],

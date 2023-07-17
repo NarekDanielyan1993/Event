@@ -3,13 +3,15 @@ import { IconButton, Typography } from '@mui/material';
 
 import StyledNotFound from './style';
 
-function NotFound({ text }) {
+function NotFound({ text, withIcon }) {
     return (
         <StyledNotFound>
-            <IconButton>
-                <ErrorOutline className="not-found-icon" />
-            </IconButton>
-            <Typography className="not-found-text" variant="h5">
+            {withIcon && (
+                <IconButton>
+                    <ErrorOutline className="not-found-icon" />
+                </IconButton>
+            )}
+            <Typography className="not-found-text" my={3} variant="h5">
                 {text || 'Not Found'}
             </Typography>
         </StyledNotFound>

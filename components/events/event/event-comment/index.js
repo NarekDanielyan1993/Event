@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { useRef } from 'react';
 
 import EventCommentForm from './comment-form';
 import CommentList from './comment-list/index';
@@ -9,27 +9,22 @@ function EventComments({
     onDeleteComments,
     comments,
     onUpdateComments,
+    onGetComments,
+    showComments,
+    isCommentsFetched,
 }) {
-    const [showComments, setShowComments] = useState(false);
-
     const commentListRef = useRef(null);
-
-    const toggleCommentsList = () => {
-        setShowComments((prev) => !prev);
-    };
 
     return (
         <StyledEventCommentContainer>
-            <StyledEventButton
-                disabled={!(comments.length > 0)}
-                onClick={toggleCommentsList}
-            >
+            <StyledEventButton onClick={onGetComments}>
                 {`${showComments ? 'Hide Comments' : 'Show Comments'} `}
             </StyledEventButton>
             <EventCommentForm key={`${comments}`} onSubmit={onSubmit} />
             {showComments && (
                 <CommentList
                     comments={comments}
+                    isCommentsFetched={isCommentsFetched}
                     onDeleteComments={onDeleteComments}
                     onUpdateComments={onUpdateComments}
                     ref={commentListRef}

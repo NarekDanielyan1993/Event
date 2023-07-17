@@ -7,7 +7,8 @@ const StyledNotFound = styled(Box)(({ theme }) => ({
         flexDirection: 'column',
         alignItems: 'center',
         justifyContent: 'center',
-        minHeight: '100vh',
+        height: '100%',
+        width: '100%',
     },
     '& .not-found-icon': {
         fontSize: '4rem',

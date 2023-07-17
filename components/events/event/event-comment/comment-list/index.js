@@ -1,10 +1,14 @@
 import { forwardRef, useEffect } from 'react';
 
+import NotFound from 'components/not-found';
 import CommentItem from './comment-item';
 import StyledList from './style';
 
 const CommentList = forwardRef(
-    ({ comments, onUpdateComments, onDeleteComments }, ref) => {
+    (
+        { comments, onUpdateComments, onDeleteComments, isCommentsFetched },
+        ref
+    ) => {
         useEffect(() => {
             if (ref) {
                 ref.current.scrollIntoView({
@@ -16,16 +20,23 @@ const CommentList = forwardRef(
 
         return (
             <StyledList ref={ref}>
-                {comments && comments.length > 0
-                    ? comments.map((comment) => (
-                          <CommentItem
-                              comment={comment}
-                              key={comment._id}
-                              onDeleteComments={onDeleteComments}
-                              onUpdateComments={onUpdateComments}
-                          />
-                      ))
-                    : null}
+                {Array.isArray(comments) &&
+                comments.length > 0 &&
+                isCommentsFetched ? (
+                    comments.map((comment) => (
+                        <CommentItem
+                            comment={comment}
+                            key={comment._id}
+                            onDeleteComments={onDeleteComments}
+                            onUpdateComments={onUpdateComments}
+                        />
+                    ))
+                ) : (
+                    <NotFound
+                        text="There are no comments to show."
+                        withIcon={false}
+                    />
+                )}
             </StyledList>
         );
     }

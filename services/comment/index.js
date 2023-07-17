@@ -5,6 +5,35 @@ import { useErrorBoundary } from 'react-error-boundary';
 import { EVENTS_PATHS, METHODS } from 'constant';
 import { apiRequest } from 'utils';
 
+export const useGetComments = () => {
+    const { showBoundary } = useErrorBoundary();
+
+    const [isLoading, setIsLoading] = useState(false);
+
+    const [isFetched, setIsFetched] = useState(false);
+
+    const getComments = async (eventId) => {
+        setIsLoading(true);
+        setIsFetched(false);
+        try {
+            const {
+                data: { comments },
+            } = await apiRequest(
+                METHODS.GET,
+                `${EVENTS_PATHS.EVENT_COMMENTS}/${eventId}`
+            );
+            return comments;
+        } catch (error) {
+            showBoundary(error);
+        } finally {
+            setIsLoading(false);
+            setIsFetched(true);
+        }
+    };
+
+    return { isLoading, getComments, isFetched };
+};
+
 const useCreateComment = () => {
     const [isLoading, setIsLoading] = useState(false);
 
