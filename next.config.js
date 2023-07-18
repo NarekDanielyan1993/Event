@@ -9,9 +9,8 @@ let nextConfig = () => {
         images: {
             remotePatterns: [
                 {
-                    protocol: 'http',
-                    hostname: 'localhost',
-                    port: '3000',
+                    protocol: 'https',
+                    hostname: process.env.NEXT_PUBLIC_API_URL,
                     pathname: '/api/images/**',
                 },
             ],
