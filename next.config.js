@@ -9,7 +9,11 @@ let nextConfig = () => {
         images: {
             remotePatterns: [
                 {
-                    hostname: process.env.NEXT_PUBLIC_BASE_URL,
+                    hostname: 'localhost:3000',
+                    pathname: '/api/images/**',
+                },
+                {
+                    hostname: 'zingy-hotteok-06d64f',
                     pathname: '/api/images/**',
                 },
             ],
