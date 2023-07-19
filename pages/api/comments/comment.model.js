@@ -23,18 +23,17 @@ const commentSchema = new mongoose.Schema({
 
 commentSchema.statics.getCommentsByEvent = async function (eventId) {
     await connectDB();
-    const comments = await this.find({ eventId });
+    const comments = await this.find({ eventId }).sort({ createdDate: -1 });
 
     return JSON.parse(JSON.stringify(comments));
 };
 
-commentSchema.statics.deleteCommentsByEvent =
-    async function deleteCommentsByEvent(eventId) {
-        await connectDB();
-        const comments = await this.deleteMany({ eventId });
+commentSchema.statics.deleteCommentsByEvent = async function (eventId) {
+    await connectDB();
+    const comments = await this.deleteMany({ eventId });
 
-        return JSON.parse(JSON.stringify(comments));
-    };
+    return JSON.parse(JSON.stringify(comments));
+};
 
 const Comment =
     mongoose.models.Comment || mongoose.model('Comment', commentSchema);

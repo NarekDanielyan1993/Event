@@ -39,8 +39,9 @@ export default function EventDetailPage({ event }) {
 
     const getCommentsHandler = async () => {
         if (!isCommentsFetched) {
-            const allComments = await getComments(event._id);
-            setCommentList(allComments);
+            await getComments(event._id, (allComments) => {
+                setCommentList(allComments);
+            });
         }
         setShowComments((prev) => !prev);
     };

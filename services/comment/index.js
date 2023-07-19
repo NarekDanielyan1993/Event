@@ -12,7 +12,7 @@ export const useGetComments = () => {
 
     const [isFetched, setIsFetched] = useState(false);
 
-    const getComments = async (eventId) => {
+    const getComments = async (eventId, fn) => {
         setIsLoading(true);
         setIsFetched(false);
         try {
@@ -22,7 +22,7 @@ export const useGetComments = () => {
                 METHODS.GET,
                 `${EVENTS_PATHS.EVENT_COMMENTS}/${eventId}`
             );
-            return comments;
+            fn(comments);
         } catch (error) {
             showBoundary(error);
         } finally {

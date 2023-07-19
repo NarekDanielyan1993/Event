@@ -21,7 +21,7 @@ router.use(authMiddleware);
 router.get(async (req, res) => {
     try {
         const { eventId } = req.query;
-        const allComments = await Comment.find({ eventId });
+        const allComments = await Comment.getCommentsByEvent(eventId);
         res.status(200).json({ comments: allComments });
     } catch (error) {
         handleError(error, res);
