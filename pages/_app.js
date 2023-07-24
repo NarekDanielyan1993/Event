@@ -9,12 +9,14 @@ import Head from 'next/head';
 import { SnackbarProvider } from 'notistack';
 import PropTypes from 'prop-types';
 import { ErrorBoundary } from 'react-error-boundary';
+import { ReactQueryDevtools } from 'react-query/devtools';
 
 import Layout from 'components/Layout';
 import { Fallback } from 'components/error/error-boundary-fallback';
 import IsProtected from 'components/is-protected';
 import { AUTH_SESSION_OPTIONS } from 'constant';
 import useGetLayout from 'hooks/useGetLayout';
+import { QueryClient, QueryClientProvider } from 'react-query';
 import { createEmotionCache, logError } from 'utils';
 import '../styles/globals.css';
 import theme from '../styles/theme';
@@ -29,6 +31,7 @@ function MyApp(props) {
     } = props;
 
     const SelectedLayout = useGetLayout(Component, Layout);
+    const queryClient = new QueryClient();
 
     return (
         <CacheProvider value={emotionCache}>
@@ -54,12 +57,18 @@ function MyApp(props) {
                                 {...AUTH_SESSION_OPTIONS}
                                 session={session}
                             >
-                                <SelectedLayout>
-                                    <IsProtected
-                                        component={Component}
-                                        pageProps={pageProps}
-                                    />
-                                </SelectedLayout>
+                                <QueryClientProvider
+                                    client={queryClient}
+                                    initialIsOpen={false}
+                                >
+                                    <SelectedLayout>
+                                        <IsProtected
+                                            component={Component}
+                                            pageProps={pageProps}
+                                        />
+                                    </SelectedLayout>
+                                    <ReactQueryDevtools initialIsOpen={false} />
+                                </QueryClientProvider>
                             </SessionProvider>
                         </ErrorBoundary>
                     </SnackbarProvider>

@@ -1,6 +1,7 @@
 import { endOfMonth, format, isValid, parseISO, startOfMonth } from 'date-fns';
 
 import { MMMM_D_YYYY } from 'constant';
+import { utcToZonedTime } from 'date-fns-tz';
 
 export class CustomDate {
     static formatDate(dateString, formatString = MMMM_D_YYYY) {
@@ -18,13 +19,15 @@ export class CustomDate {
             return '';
         }
     }
-
-    static timeElapsed(date) {
+    static timeElapsed = (date) => {
         if (!date) {
             return null;
         }
+
+        const userTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+        const dateInUserTimeZone = utcToZonedTime(new Date(date), userTimeZone);
         const now = new Date();
-        const elapsed = now - new Date(date);
+        const elapsed = Math.abs(now.getTime() - dateInUserTimeZone.getTime());
         const seconds = Math.floor(elapsed / 1000);
 
         if (seconds < 60) {
@@ -52,7 +55,7 @@ export class CustomDate {
         const years = Math.floor(days / 365);
 
         return `${years}y`;
-    }
+    };
 
     static getStartOfMonth(dateString) {
         return startOfMonth(new Date(dateString));

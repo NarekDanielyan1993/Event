@@ -1,117 +1,124 @@
-/* eslint-disable consistent-return */
-import { useState } from 'react';
-import { useErrorBoundary } from 'react-error-boundary';
-
+/* eslint-disable no-useless-catch */
 import { EVENTS_PATHS, METHODS } from 'constant';
+import { useMutation, useQuery, useQueryClient } from 'react-query';
 import { apiRequest } from 'utils';
 
-export const useGetComments = () => {
-    const { showBoundary } = useErrorBoundary();
+export const GET_COMMENTS = 'GET_COMMENTS';
 
-    const [isLoading, setIsLoading] = useState(false);
-
-    const [isFetched, setIsFetched] = useState(false);
-
-    const getComments = async (eventId, fn) => {
-        setIsLoading(true);
-        setIsFetched(false);
-        try {
+const useGetComments = (eventId) => {
+    const { isLoading, isFetching, refetch } = useQuery(
+        [GET_COMMENTS, { eventId }],
+        async ({ queryKey: [, { eventId }] }) => {
             const {
                 data: { comments },
-            } = await apiRequest(
-                METHODS.GET,
-                `${EVENTS_PATHS.EVENT_COMMENTS}/${eventId}`
-            );
-            fn(comments);
+            } = await apiRequest({
+                method: METHODS.GET,
+                url: `${EVENTS_PATHS.EVENT_COMMENTS}/${eventId}`,
+            });
+            return comments;
+        },
+        {
+            enabled: false,
+        }
+    );
+
+    const getComments = async () => {
+        try {
+            const { data } = await refetch();
+            return data;
         } catch (error) {
-            showBoundary(error);
-        } finally {
-            setIsLoading(false);
-            setIsFetched(true);
+            throw error;
         }
     };
 
-    return { isLoading, getComments, isFetched };
+    return { isLoading: isLoading || isFetching, getComments };
 };
 
 const useCreateComment = () => {
-    const [isLoading, setIsLoading] = useState(false);
+    const queryClient = useQueryClient();
+    const { isLoading, mutateAsync } = useMutation(
+        async ({ eventId, formData }) => {
+            const { data: newComment } = await apiRequest({
+                method: METHODS.POST,
+                url: `${EVENTS_PATHS.EVENT_COMMENTS}/${eventId}`,
+                body: formData,
+            });
+            return newComment;
+        },
+        {
+            onSuccess: () => {
+                queryClient.invalidateQueries(GET_COMMENTS);
+            },
+        }
+    );
 
-    const { showBoundary } = useErrorBoundary();
-
-    const createComment = async (eventId, data, fn) => {
-        setIsLoading(true);
+    const createComment = async (eventId, formData) => {
         try {
-            const {
-                data: { data: newComment },
-            } = await apiRequest(
-                METHODS.POST,
-                `${EVENTS_PATHS.EVENT_COMMENTS}/${eventId}`,
-                data
-            );
-            fn(newComment);
+            console.log('fortmData', formData);
+            const { data } = await mutateAsync({ eventId, formData });
+            return data;
         } catch (error) {
-            showBoundary(error);
-        } finally {
-            setIsLoading(false);
+            throw error;
         }
     };
 
-    return { isLoading, createComment };
+    return { isLoading: isLoading, createComment };
 };
 
 const useUpdateComment = () => {
-    const { showBoundary } = useErrorBoundary();
-
-    const [isLoading, setIsLoading] = useState(false);
-
-    const updateComment = async (eventId, commentId, data, onClose, fn) => {
-        setIsLoading(true);
-        try {
+    const { isLoading, mutateAsync } = useMutation(
+        async ({ eventId, commentId, data }) => {
             const {
                 data: { updatedComment },
-            } = await apiRequest(
-                METHODS.PUT,
-                `${EVENTS_PATHS.EVENT_COMMENTS}/${eventId}?commentId=${commentId}`,
-                data
-            );
+            } = await apiRequest({
+                method: METHODS.PUT,
+                url: `${EVENTS_PATHS.EVENT_COMMENTS}/${eventId}?commentId=${commentId}`,
+                body: data,
+            });
+            return updatedComment;
+        }
+    );
 
-            fn(updatedComment);
+    const updateComment = async (eventId, commentId, data, onClose) => {
+        try {
+            const updatedComment = await mutateAsync({
+                eventId,
+                commentId,
+                data,
+            });
+            return updatedComment;
         } catch (error) {
-            showBoundary(error);
+            throw error;
         } finally {
-            setIsLoading(false);
             if (onClose) {
                 onClose();
             }
         }
     };
 
-    return { isLoading, updateComment };
+    return { isLoading: isLoading, updateComment };
 };
 
 const useDeleteComment = () => {
-    const [isLoading, setIsLoading] = useState(false);
+    const { isLoading, mutateAsync } = useMutation(
+        async ({ eventId, commentId }) => {
+            await apiRequest({
+                method: METHODS.DELETE,
+                url: `${EVENTS_PATHS.EVENT_COMMENTS}/${eventId}`,
+                body: { commentId },
+            });
+        }
+    );
 
-    const { showBoundary } = useErrorBoundary();
-
-    const deleteComment = async (eventId, commentId, fn) => {
+    const deleteComment = async (eventId, commentId) => {
         try {
-            setIsLoading(true);
-            await apiRequest(
-                METHODS.DELETE,
-                `${EVENTS_PATHS.EVENT_COMMENTS}/${eventId}`,
-                { commentId }
-            );
-            fn();
+            await mutateAsync({ eventId, commentId });
         } catch (error) {
-            showBoundary(error);
-        } finally {
-            setIsLoading(false);
+            throw error;
         }
     };
 
-    return { isLoading, deleteComment };
+    return { isLoading: isLoading, deleteComment };
 };
 
-export { useCreateComment, useDeleteComment, useUpdateComment };
+export { useCreateComment, useDeleteComment, useGetComments, useUpdateComment };

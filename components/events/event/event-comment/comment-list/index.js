@@ -5,10 +5,7 @@ import CommentItem from './comment-item';
 import StyledList from './style';
 
 const CommentList = forwardRef(
-    (
-        { comments, onUpdateComments, onDeleteComments, isCommentsFetched },
-        ref
-    ) => {
+    ({ comments, onUpdateComments, onDeleteComments }, ref) => {
         useEffect(() => {
             if (ref) {
                 ref.current.scrollIntoView({
@@ -20,9 +17,7 @@ const CommentList = forwardRef(
 
         return (
             <StyledList ref={ref}>
-                {Array.isArray(comments) &&
-                comments.length > 0 &&
-                isCommentsFetched ? (
+                {Array.isArray(comments) && comments.length > 0 ? (
                     comments.map((comment) => (
                         <CommentItem
                             comment={comment}

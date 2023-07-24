@@ -1,28 +1,33 @@
+/* eslint-disable no-useless-catch */
 /* eslint-disable consistent-return */
 import { useState } from 'react';
 import { useErrorBoundary } from 'react-error-boundary';
 
 import { EVENTS_PATHS, METHODS } from 'constant';
+import { useMutation, useQuery, useQueryClient } from 'react-query';
 import { apiRequest } from 'utils';
+
+const GET_FILTERED_EVENTS = 'GET_FILTERED_EVENTS';
+export const GET_EVENTS = 'GET_EVENTS';
 
 const useCreateEvent = () => {
     const [isLoading, setIsLoading] = useState(false);
 
     const { showBoundary } = useErrorBoundary();
 
-    const createEvent = async (data, fn) => {
+    const createEvent = async (data) => {
         try {
             setIsLoading(true);
 
-            const { data: responseData } = await apiRequest(
-                METHODS.POST,
-                `${EVENTS_PATHS.EVENTS}`,
-                data,
-                {
+            const { data: responseData } = await apiRequest({
+                method: METHODS.POST,
+                url: `${EVENTS_PATHS.EVENTS}`,
+                body: data,
+                headers: {
                     'Content-Type': `multipart/form-data; boundary=${data._boundary}`,
-                }
-            );
-            fn(responseData.createdEvent);
+                },
+            });
+            return responseData.createdEvent;
         } catch (error) {
             showBoundary(error);
         } finally {
@@ -33,82 +38,95 @@ const useCreateEvent = () => {
     return { isLoading, createEvent };
 };
 
-const useFilterEvents = () => {
-    const [isLoading, setIsLoading] = useState(false);
+const useFilterEvents = (date) => {
+    const { isLoading, refetch } = useQuery(
+        [GET_FILTERED_EVENTS, { date }],
+        async ({ queryKey: [, { date }] }) => {
+            const date_to_string = date.toISOString();
+            const { data: responseData } = await apiRequest({
+                method: METHODS.GET,
+                url: `${EVENTS_PATHS.DATE_FILTER}/${date_to_string}`,
+            });
+            return responseData.filteredEvents;
+        },
+        {
+            enabled: false,
+        }
+    );
 
-    const { showBoundary } = useErrorBoundary();
-
-    const getFilteredEvents = async (data, fn) => {
+    const getFilteredEvents = async () => {
         try {
-            setIsLoading(true);
-
-            const { data: responseData } = await apiRequest(
-                METHODS.GET,
-                `${EVENTS_PATHS.DATE_FILTER}/${data}`,
-                {
-                    'Content-Type': `multipart/form-data; boundary=${data._boundary}`,
-                }
-            );
-            fn(responseData.filteredEvents);
+            const { data: responseData } = await refetch();
+            return responseData;
         } catch (error) {
-            showBoundary(error);
-        } finally {
-            setIsLoading(false);
+            throw error;
         }
     };
 
-    return { isLoading, getFilteredEvents };
+    return {
+        isLoading,
+        getFilteredEvents,
+    };
 };
 
 const useUpdateEvent = () => {
-    const { showBoundary } = useErrorBoundary();
+    const queryClient = useQueryClient();
 
-    const [isLoading, setIsLoading] = useState(false);
-
-    const updateEvent = async (eventId, data, fn) => {
-        try {
-            setIsLoading(true);
-
-            const { data: responseData } = await apiRequest(
-                METHODS.PUT,
-                `${EVENTS_PATHS.EVENTS}?id=${eventId}`,
-                data,
-                {
+    const { isLoading, mutateAsync } = useMutation(
+        async ({ eventId, data }) => {
+            console.log('data', data);
+            const {
+                data: { updatedEvent },
+            } = await apiRequest({
+                method: METHODS.PUT,
+                url: `${EVENTS_PATHS.EVENTS}?id=${eventId}`,
+                body: data,
+                headers: {
                     'Content-Type': `multipart/form-data; boundary=${data._boundary}`,
-                }
-            );
-            fn(responseData.updatedEvent);
+                },
+            });
+            return updatedEvent;
+        },
+        {
+            onSuccess: ({ eventId }) => {
+                queryClient.invalidateQueries([GET_EVENTS, eventId]);
+            },
+        }
+    );
+
+    const updateEvent = async (eventId, data) => {
+        try {
+            const updatedEvent = await mutateAsync({
+                eventId,
+                data,
+            });
+            console.log('updatedEvent', updatedEvent);
+            return updatedEvent;
         } catch (error) {
-            showBoundary(error);
-        } finally {
-            setIsLoading(false);
+            throw error;
         }
     };
 
-    return { isLoading, updateEvent };
+    return { isLoading: isLoading, updateEvent };
 };
 
 const useDeleteEvent = () => {
-    const [isLoading, setIsLoading] = useState(false);
+    const deleteEventMutation = useMutation((eventId) =>
+        apiRequest({
+            method: METHODS.DELETE,
+            url: `${EVENTS_PATHS.EVENTS}?id=${eventId}`,
+        })
+    );
 
-    const { showBoundary } = useErrorBoundary();
-
-    const deleteEvent = async (eventId, fn) => {
+    const deleteEvent = async (eventId) => {
         try {
-            setIsLoading(true);
-            await apiRequest(
-                METHODS.DELETE,
-                `${EVENTS_PATHS.EVENTS}?id=${eventId}`
-            );
-            fn();
+            await deleteEventMutation.mutateAsync(eventId);
         } catch (error) {
-            showBoundary(error);
-        } finally {
-            setIsLoading(false);
+            throw error;
         }
     };
 
-    return { isLoading, deleteEvent };
+    return { isLoading: deleteEventMutation.isLoading, deleteEvent };
 };
 
 export { useCreateEvent, useDeleteEvent, useFilterEvents, useUpdateEvent };

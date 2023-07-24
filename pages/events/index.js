@@ -8,10 +8,12 @@ import Head from 'next/head';
 import { authOptions } from 'pages/api/auth/[...nextauth]';
 import Event from 'pages/api/events/event.model';
 import { useState } from 'react';
+import { useErrorBoundary } from 'react-error-boundary';
+import { QueryClient, dehydrate } from 'react-query';
 import {
+    GET_EVENTS,
     useCreateEvent,
     useDeleteEvent,
-    useFilterEvents,
     useUpdateEvent,
 } from 'services/event';
 
@@ -20,52 +22,54 @@ export default function EventsPage({ eventList }) {
 
     const { isLoading, createEvent } = useCreateEvent();
 
-    const { isLoading: isFilterDatesLoading, getFilteredEvents } =
-        useFilterEvents();
+    const { showBoundary } = useErrorBoundary();
 
     const { isLoading: isUpdateLoading, updateEvent } = useUpdateEvent();
 
     const { isLoading: isDeleteLoading, deleteEvent } = useDeleteEvent();
 
-    const onSearch = (date) => {
-        const date_to_string = date.toISOString();
-        getFilteredEvents(date_to_string, (filteredEvents) => {
-            setEvents(filteredEvents);
-        });
-    };
-
     const createEventHandler = async (data) => {
-        const formData = new FormData();
-        formData.append('title', data.title);
-        formData.append('description', data.description);
-        formData.append('location', data.location);
-        formData.append('date', data.date);
-        formData.append('file', data.file);
-        await createEvent(formData, (newEvent) => {
+        try {
+            const formData = new FormData();
+            formData.append('title', data.title);
+            formData.append('description', data.description);
+            formData.append('location', data.location);
+            formData.append('date', data.date);
+            formData.append('file', data.file);
+
+            const newEvent = await createEvent(formData);
             setEvents((prev) => [...prev, newEvent]);
-        });
+        } catch (error) {
+            showBoundary(error);
+        }
     };
 
     const updateEventHandler = async (id, data) => {
-        const formData = new FormData();
-        formData.append('title', data.title);
-        formData.append('description', data.description);
-        formData.append('location', data.location);
-        formData.append('date', data.date);
-        formData.append('file', data.file);
-        updateEvent(id, formData, (updatedEvent) => {
+        try {
+            const formData = new FormData();
+            formData.append('title', data.title);
+            formData.append('description', data.description);
+            formData.append('location', data.location);
+            formData.append('date', data.date);
+            formData.append('file', data.file);
+            const updatedEvent = await updateEvent(id, formData);
             setEvents((prev) =>
                 prev.map((event) =>
                     event._id === updatedEvent._id ? updatedEvent : event
                 )
             );
-        });
+        } catch (error) {
+            showBoundary(error);
+        }
     };
 
     const deleteEventHandler = async (eventId) => {
-        await deleteEvent(eventId, () => {
+        try {
+            await deleteEvent(eventId);
             setEvents((prev) => prev.filter((event) => event._id !== eventId));
-        });
+        } catch (error) {
+            showBoundary(error);
+        }
     };
 
     const clearFilterHandler = () => {
@@ -74,10 +78,7 @@ export default function EventsPage({ eventList }) {
 
     return (
         <div>
-            {(isLoading ||
-                isFilterDatesLoading ||
-                isUpdateLoading ||
-                isDeleteLoading) && <Loader />}
+            {(isLoading || isUpdateLoading || isDeleteLoading) && <Loader />}
             <Head>
                 <title>Explore All events</title>
             </Head>
@@ -90,7 +91,7 @@ export default function EventsPage({ eventList }) {
             <EventsSearch
                 events={eventList}
                 onClearFilter={clearFilterHandler}
-                onSearch={onSearch}
+                setEvents={setEvents}
             />
             <EventList
                 items={events}
@@ -116,9 +117,13 @@ export async function getServerSideProps(context) {
                 },
             };
         }
-        const data = await Event.getAllEvents();
+        const queryClient = new QueryClient();
+        const data = await queryClient.fetchQuery([GET_EVENTS], () =>
+            Event.getAllEvents()
+        );
         return {
             props: {
+                dehydratedState: dehydrate(queryClient),
                 eventList: data,
             },
         };

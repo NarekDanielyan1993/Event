@@ -1,6 +1,7 @@
 import { useRef, useState } from 'react';
 
 import Loader from 'components/loader';
+import { useErrorBoundary } from 'react-error-boundary';
 import {
     useCreateComment,
     useDeleteComment,
@@ -11,8 +12,10 @@ import EventCommentForm from './comment-form';
 import CommentList from './comment-list/index';
 import { StyledEventButton, StyledEventCommentContainer } from './style';
 
-function EventComments() {
+function EventComments({ eventId }) {
     const commentListRef = useRef(null);
+
+    const { showBoundary } = useErrorBoundary();
 
     const [commentList, setCommentList] = useState([]);
 
@@ -21,11 +24,8 @@ function EventComments() {
     const { isLoading: isCreateCommentLoading, createComment } =
         useCreateComment();
 
-    const {
-        isLoading: isCommentsLoading,
-        getComments,
-        isFetched: isCommentsFetched,
-    } = useGetComments();
+    const { isLoading: isCommentsLoading, getComments } =
+        useGetComments(eventId);
 
     const { isLoading: isUpdateCommentLoading, updateComment } =
         useUpdateComment();
@@ -34,45 +34,56 @@ function EventComments() {
         useDeleteComment();
 
     const getCommentsHandler = async () => {
-        if (!isCommentsFetched) {
-            await getComments(event._id, (allComments) => {
+        try {
+            if (!showComments) {
+                const allComments = await getComments();
                 setCommentList(allComments);
-            });
+            }
+        } catch (error) {
+            showBoundary(error);
         }
         setShowComments((prev) => !prev);
     };
 
     const onSubmit = async (data) => {
-        const finalData = { ...data };
-        await createComment(event._id, finalData, (newComment) => {
+        try {
+            const finalData = { ...data };
+            const newComment = await createComment(eventId, finalData);
             setCommentList((prev) => [newComment, ...prev]);
-        });
+        } catch (error) {
+            showBoundary(error);
+        }
     };
 
     const deleteComments = async (eventId, commentId) => {
-        await deleteComment(eventId, commentId, () => {
+        try {
+            await deleteComment(eventId, commentId);
             setCommentList((prev) =>
                 prev.filter((comment) => comment._id !== commentId)
             );
-        });
+        } catch (error) {
+            showBoundary(error);
+        }
     };
 
     const updateComments = async (eventId, commentId, data, onClose) => {
-        await updateComment(
-            eventId,
-            commentId,
-            data,
-            onClose,
-            (updatedComment) => {
-                setCommentList((prev) =>
-                    prev.map((comment) =>
-                        comment._id === updatedComment._id
-                            ? updatedComment
-                            : comment
-                    )
-                );
-            }
-        );
+        try {
+            const updatedComment = await updateComment(
+                eventId,
+                commentId,
+                data,
+                onClose
+            );
+            setCommentList((prev) =>
+                prev.map((comment) =>
+                    comment._id === updatedComment._id
+                        ? updatedComment
+                        : comment
+                )
+            );
+        } catch (error) {
+            showBoundary(error);
+        }
     };
 
     return (
@@ -84,14 +95,10 @@ function EventComments() {
             <StyledEventButton onClick={getCommentsHandler}>
                 {`${showComments ? 'Hide Comments' : 'Show Comments'} `}
             </StyledEventButton>
-            <EventCommentForm
-                key={`${commentList.length}`}
-                onSubmit={onSubmit}
-            />
+            <EventCommentForm key={`${commentList}`} onSubmit={onSubmit} />
             {showComments && (
                 <CommentList
                     comments={commentList}
-                    isCommentsFetched={isCommentsFetched}
                     onDeleteComments={deleteComments}
                     onUpdateComments={updateComments}
                     ref={commentListRef}

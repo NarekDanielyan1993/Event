@@ -4,14 +4,13 @@ import EventContent from 'components/event-detail/event-content';
 import EventLogistics from 'components/event-detail/event-logistics';
 import EventSummary from 'components/event-detail/event-summary';
 import EventComments from 'components/events/event/event-comment';
+import Loader from 'components/loader';
 import NotFound from 'components/not-found';
-import { getServerSession } from 'next-auth';
-import { getSession } from 'next-auth/react';
-import { authOptions } from 'pages/api/auth/[...nextauth]';
+import { useSession } from 'next-auth/react';
 import Event from 'pages/api/events/event.model';
 
 export default function EventDetailPage({ event }) {
-    const { data: session } = getSession();
+    const { status } = useSession();
     return (
         <>
             <Head>
@@ -29,8 +28,10 @@ export default function EventDetailPage({ event }) {
                         imageId={event.imageId}
                     />
                     <EventContent>{event.description}</EventContent>
-                    {session ? (
-                        <EventComments />
+                    {status === 'loading' ? (
+                        <Loader fixed={false} withOverlay={false} />
+                    ) : status === 'authenticated' ? (
+                        <EventComments eventId={event._id} />
                     ) : (
                         <NotFound text="Authorize to leave a comment." />
                     )}
@@ -46,15 +47,6 @@ export async function getServerSideProps(ctx) {
     const id = ctx.params.eventId;
 
     try {
-        const session = await getServerSession(ctx.req, ctx.res, authOptions);
-        if (!session) {
-            return {
-                redirect: {
-                    destination: '/auth',
-                    permanent: false,
-                },
-            };
-        }
         const event = await Event.getEventById(id);
 
         return {

@@ -1,4 +1,4 @@
-import { Button, Typography } from '@mui/material';
+import { Button } from '@mui/material';
 import { useState } from 'react';
 
 import EventDialogCreate from 'components/events/event-create-dialog';
@@ -14,7 +14,7 @@ import {
     StyledText,
 } from './style';
 
-function EventItem({ event, id, onUpdateEvent, onDeleteEvent, onlyView }) {
+function EventItem({ event, id, onUpdateEvent, onDeleteEvent }) {
     const { title, location, date, imageId } = event;
     const [isDialogOpen, setIsDialogOpen] = useState(false);
 
@@ -37,19 +37,7 @@ function EventItem({ event, id, onUpdateEvent, onDeleteEvent, onlyView }) {
             </StyledContent>
             <StyledOverlay>
                 <div className="actions">
-                    {!session ? (
-                        <Typography
-                            sx={{
-                                textTransform: 'uppercase',
-                                color: 'white',
-                                display: 'block',
-                                width: '100%',
-                            }}
-                            textAlign="center"
-                        >
-                            Log in to explore event
-                        </Typography>
-                    ) : !onlyView ? (
+                    {session ? (
                         <>
                             <Button onClick={() => setIsDialogOpen(true)}>
                                 Edit
