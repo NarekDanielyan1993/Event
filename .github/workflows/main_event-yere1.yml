@@ -52,5 +52,5 @@ jobs:
         with:
           app-name: 'Event-yere1'
           slot-name: 'Production'
-          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_03234E2B3B6B4787B825B0244FB82BD8 }}
+          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_4C9618B6F84A444FAC48B67C77BCB41A }}
           package: .
