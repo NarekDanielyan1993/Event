@@ -8,8 +8,7 @@
     "start": "next start",
     "export": "next export",
     "analyze": "cross-env ANALYZE=true next build",
-    "docker:build": "docker build -t app:dev .",
-    "docker:start": "docker run --publish 3000:3000 app:dev",
+    "docker:start": "docker-compose up",
     "lint": "eslint . --ext .js,.jsx --fix"
   },
   "dependencies": {
