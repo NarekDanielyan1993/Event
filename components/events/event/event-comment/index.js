@@ -13,9 +13,8 @@ import CommentList from './comment-list/index';
 import { StyledEventButton, StyledEventCommentContainer } from './style';
 
 function EventComments({ eventId }) {
-    const commentListRef = useRef(null);
-
     const { showBoundary } = useErrorBoundary();
+    const commentListRef = useRef(null);
 
     const [commentList, setCommentList] = useState([]);
 
@@ -95,7 +94,10 @@ function EventComments({ eventId }) {
             <StyledEventButton onClick={getCommentsHandler}>
                 {`${showComments ? 'Hide Comments' : 'Show Comments'} `}
             </StyledEventButton>
-            <EventCommentForm key={`${commentList}`} onSubmit={onSubmit} />
+            <EventCommentForm
+                key={`${commentList.length}`}
+                onSubmit={onSubmit}
+            />
             {showComments && (
                 <CommentList
                     comments={commentList}

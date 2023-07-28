@@ -16,7 +16,8 @@ import { Fallback } from 'components/error/error-boundary-fallback';
 import IsProtected from 'components/is-protected';
 import { AUTH_SESSION_OPTIONS } from 'constant';
 import useGetLayout from 'hooks/useGetLayout';
-import { QueryClient, QueryClientProvider } from 'react-query';
+import { useState } from 'react';
+import { Hydrate, QueryClient, QueryClientProvider } from 'react-query';
 import { createEmotionCache, logError } from 'utils';
 import '../styles/globals.css';
 import theme from '../styles/theme';
@@ -31,7 +32,17 @@ function MyApp(props) {
     } = props;
 
     const SelectedLayout = useGetLayout(Component, Layout);
-    const queryClient = new QueryClient();
+    const [queryClient] = useState(
+        () =>
+            new QueryClient({
+                defaultOptions: {
+                    queries: {
+                        staleTime: 6 * 60 * 1000,
+                        cacheTime: 20 * 60 * 1000,
+                    },
+                },
+            })
+    );
 
     return (
         <CacheProvider value={emotionCache}>
@@ -61,12 +72,14 @@ function MyApp(props) {
                                     client={queryClient}
                                     initialIsOpen={false}
                                 >
-                                    <SelectedLayout>
-                                        <IsProtected
-                                            component={Component}
-                                            pageProps={pageProps}
-                                        />
-                                    </SelectedLayout>
+                                    <Hydrate state={pageProps.dehydratedState}>
+                                        <SelectedLayout>
+                                            <IsProtected
+                                                component={Component}
+                                                pageProps={pageProps}
+                                            />
+                                        </SelectedLayout>
+                                    </Hydrate>
                                     <ReactQueryDevtools initialIsOpen={false} />
                                 </QueryClientProvider>
                             </SessionProvider>

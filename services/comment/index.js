@@ -6,7 +6,7 @@ import { apiRequest } from 'utils';
 export const GET_COMMENTS = 'GET_COMMENTS';
 
 const useGetComments = (eventId) => {
-    const { isLoading, isFetching, refetch } = useQuery(
+    const { isLoading, refetch, isFetched } = useQuery(
         [GET_COMMENTS, { eventId }],
         async ({ queryKey: [, { eventId }] }) => {
             const {
@@ -31,7 +31,7 @@ const useGetComments = (eventId) => {
         }
     };
 
-    return { isLoading: isLoading || isFetching, getComments };
+    return { isLoading: isLoading, isFetched, getComments };
 };
 
 const useCreateComment = () => {
@@ -54,7 +54,6 @@ const useCreateComment = () => {
 
     const createComment = async (eventId, formData) => {
         try {
-            console.log('fortmData', formData);
             const { data } = await mutateAsync({ eventId, formData });
             return data;
         } catch (error) {

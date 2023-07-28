@@ -5,6 +5,8 @@ import { dbMiddleware } from 'lib/middlewares';
 import { handleError } from 'utils';
 
 import { authMiddleware } from 'lib/middlewares/auth';
+import { getServerSession } from 'next-auth';
+import { authOptions } from 'pages/api/auth/[...nextauth]';
 import Event from '../event.model';
 
 const router = createRouter();
@@ -15,9 +17,15 @@ router.use(authMiddleware);
 
 router.get(async (req, res) => {
     try {
-        const { date_filter } = req.query;
-        const filteredEvents = await Event.getEventsByDate(date_filter);
-
+        const { date_filter, typeId } = req.query;
+        const {
+            user: { userId },
+        } = await getServerSession(req, res, authOptions);
+        const filteredEvents = await Event.getEventsByDate(
+            date_filter,
+            typeId,
+            userId
+        );
         res.status(200).json({ filteredEvents });
     } catch (error) {
         handleError(error, res);

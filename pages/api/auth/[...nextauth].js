@@ -33,25 +33,25 @@ export const authOptions = {
                     throw new ValidationError();
                 }
 
-                // Connect to MongoDB
                 await connectDB();
 
-                // Check if the user already exists
                 const currentUser = await User.findOne({ email });
+
                 if (!currentUser) {
                     throw new NotFoundError('User not found', 401);
                 }
+
                 const isValid = await verifyPassword(
                     password,
                     currentUser.password
                 );
+
                 if (!isValid) {
                     throw new ValidationError('Wrong password');
                 }
-
                 return {
                     email: currentUser.email,
-                    next: { redirect: '/events' },
+                    userId: currentUser._id.toString(),
                 };
             },
         }),
@@ -67,6 +67,41 @@ export const authOptions = {
             },
         }),
     ],
+    callbacks: {
+        async jwt({ user, token, profile }) {
+            if (user) {
+                token.email = user.email;
+                token.userId = user.userId;
+            }
+            await connectDB();
+
+            if (profile) {
+                const existingUser = await User.findOne({
+                    email: profile.email,
+                });
+
+                if (!existingUser) {
+                    const newUser = await User.create({
+                        email: profile.email,
+                    });
+
+                    token.email = newUser.email;
+                    token.userId = newUser._id.toString();
+                } else {
+                    token.userId = existingUser._id.toString();
+                    token.email = existingUser.email;
+                }
+            }
+            return token;
+        },
+        async session({ session, token }) {
+            if (token) {
+                session.user = { userId: token.userId, email: token.email };
+                return session;
+            }
+            return session;
+        },
+    },
     pages: {
         signIn: '/auth', // Custom sign-in page
         signOut: '/auth', // Custom sign-out page

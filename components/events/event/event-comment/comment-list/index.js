@@ -7,7 +7,7 @@ import StyledList from './style';
 const CommentList = forwardRef(
     ({ comments, onUpdateComments, onDeleteComments }, ref) => {
         useEffect(() => {
-            if (ref) {
+            if (ref.current) {
                 ref.current.scrollIntoView({
                     behavior: 'smooth',
                     block: 'start',

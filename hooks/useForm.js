@@ -38,6 +38,7 @@ const useForm = ({ validationSchema, defaultValues }) => {
         handleSubmit,
         FormField,
         reset,
+        control,
         formState,
     };
 };

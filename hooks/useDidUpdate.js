@@ -1,15 +1,15 @@
 import { useEffect, useRef } from 'react';
 
-function useDidUpdate(callback) {
-    const firstRenderRef = useRef(true);
+function useDidUpdate(callback, dependencies) {
+    const hasMounted = useRef(false);
 
     useEffect(() => {
-        if (firstRenderRef.current) {
-            firstRenderRef.current = false;
+        if (!hasMounted.current) {
+            hasMounted.current = true;
             return;
         }
         callback();
-    }, [callback]);
+    }, dependencies);
 }
 
 export default useDidUpdate;

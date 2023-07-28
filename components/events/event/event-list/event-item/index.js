@@ -14,7 +14,7 @@ import {
     StyledText,
 } from './style';
 
-function EventItem({ event, id, onUpdateEvent, onDeleteEvent }) {
+function EventItem({ event, id, onUpdateEvent, onDeleteEvent, onlyView }) {
     const { title, location, date, imageId } = event;
     const [isDialogOpen, setIsDialogOpen] = useState(false);
 
@@ -37,17 +37,23 @@ function EventItem({ event, id, onUpdateEvent, onDeleteEvent }) {
             </StyledContent>
             <StyledOverlay>
                 <div className="actions">
-                    {session ? (
+                    {!onlyView && session ? (
                         <>
-                            <Button onClick={() => setIsDialogOpen(true)}>
-                                Edit
-                            </Button>
-                            <Button
-                                className="delete"
-                                onClick={() => onDeleteEvent(id)}
-                            >
-                                Delete
-                            </Button>
+                            {session.user.userId === event.userId && (
+                                <>
+                                    <Button
+                                        onClick={() => setIsDialogOpen(true)}
+                                    >
+                                        Edit
+                                    </Button>
+                                    <Button
+                                        className="delete"
+                                        onClick={() => onDeleteEvent(id)}
+                                    >
+                                        Delete
+                                    </Button>
+                                </>
+                            )}
                             <EventDialogCreate
                                 isOpen={isDialogOpen}
                                 onClose={() => setIsDialogOpen(false)}

@@ -1,6 +1,6 @@
 import { Box, CircularProgress } from '@mui/material';
 
-function Loader({ fixed = true, withOverlay = true }) {
+function Loader({ fixed = true, withOverlay = true, zIndex = 9999 }) {
     return (
         <Box
             alignItems="center"
@@ -9,11 +9,11 @@ function Loader({ fixed = true, withOverlay = true }) {
             display="flex"
             justifyContent="center"
             left={0}
-            position={fixed ? 'fixed' : 'relative'}
+            position={fixed ? 'fixed' : 'absolute'}
             py={10}
             right={0}
             top={0}
-            zIndex={9999}
+            zIndex={zIndex}
         >
             <CircularProgress />
         </Box>

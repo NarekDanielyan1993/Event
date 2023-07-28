@@ -6,6 +6,7 @@ let nextConfig = () => {
         eslint: {
             ignoreDuringBuilds: true,
         },
+        output: 'standalone',
         images: {
             remotePatterns: [
                 {

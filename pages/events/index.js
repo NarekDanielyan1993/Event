@@ -1,5 +1,5 @@
 import EventHeader from 'components/events/event-header';
-import EventList from 'components/events/event/event-list';
+import EventContent from 'components/events/events-content';
 import EventsSearch from 'components/events/events-search';
 import Loader from 'components/loader';
 import PageHeader from 'components/page-header';
@@ -11,53 +11,35 @@ import { useState } from 'react';
 import { useErrorBoundary } from 'react-error-boundary';
 import { QueryClient, dehydrate } from 'react-query';
 import {
-    GET_EVENTS,
-    useCreateEvent,
+    GET_EVENTS_BY_CATEGORY,
     useDeleteEvent,
-    useUpdateEvent,
+    useGetEvents,
 } from 'services/event';
 
-export default function EventsPage({ eventList }) {
-    const [events, setEvents] = useState(eventList);
-
-    const { isLoading, createEvent } = useCreateEvent();
-
-    const { showBoundary } = useErrorBoundary();
-
-    const { isLoading: isUpdateLoading, updateEvent } = useUpdateEvent();
+export default function EventsPage() {
+    const [category, setCategory] = useState(0);
 
     const { isLoading: isDeleteLoading, deleteEvent } = useDeleteEvent();
 
-    const createEventHandler = async (data) => {
-        try {
-            const formData = new FormData();
-            formData.append('title', data.title);
-            formData.append('description', data.description);
-            formData.append('location', data.location);
-            formData.append('date', data.date);
-            formData.append('file', data.file);
+    const { getEvents, data: eventList } = useGetEvents();
 
-            const newEvent = await createEvent(formData);
-            setEvents((prev) => [...prev, newEvent]);
+    const [events, setEvents] = useState(eventList);
+
+    const { showBoundary } = useErrorBoundary();
+
+    const createEventHandler = async () => {
+        try {
+            const allEvents = await getEvents();
+            setEvents(allEvents);
         } catch (error) {
             showBoundary(error);
         }
     };
 
-    const updateEventHandler = async (id, data) => {
+    const updateEventHandler = async () => {
         try {
-            const formData = new FormData();
-            formData.append('title', data.title);
-            formData.append('description', data.description);
-            formData.append('location', data.location);
-            formData.append('date', data.date);
-            formData.append('file', data.file);
-            const updatedEvent = await updateEvent(id, formData);
-            setEvents((prev) =>
-                prev.map((event) =>
-                    event._id === updatedEvent._id ? updatedEvent : event
-                )
-            );
+            const allEvents = await getEvents();
+            setEvents(allEvents);
         } catch (error) {
             showBoundary(error);
         }
@@ -66,7 +48,8 @@ export default function EventsPage({ eventList }) {
     const deleteEventHandler = async (eventId) => {
         try {
             await deleteEvent(eventId);
-            setEvents((prev) => prev.filter((event) => event._id !== eventId));
+            const allEvents = await getEvents();
+            setEvents(allEvents);
         } catch (error) {
             showBoundary(error);
         }
@@ -78,7 +61,7 @@ export default function EventsPage({ eventList }) {
 
     return (
         <div>
-            {(isLoading || isUpdateLoading || isDeleteLoading) && <Loader />}
+            {isDeleteLoading && <Loader />}
             <Head>
                 <title>Explore All events</title>
             </Head>
@@ -89,18 +72,24 @@ export default function EventsPage({ eventList }) {
                 />
             </PageHeader>
             <EventsSearch
+                category={category}
                 events={eventList}
                 onClearFilter={clearFilterHandler}
                 setEvents={setEvents}
             />
-            <EventList
-                items={events}
-                onDeleteEvent={deleteEventHandler}
-                onUpdateEvent={updateEventHandler}
+            <EventContent
+                category={category}
+                deleteEventHandler={deleteEventHandler}
+                eventData={events}
+                setCategory={setCategory}
+                setEvents={setEvents}
+                updateEventHandler={updateEventHandler}
             />
         </div>
     );
 }
+
+const queryClient = new QueryClient();
 
 export async function getServerSideProps(context) {
     try {
@@ -117,14 +106,15 @@ export async function getServerSideProps(context) {
                 },
             };
         }
-        const queryClient = new QueryClient();
-        const data = await queryClient.fetchQuery([GET_EVENTS], () =>
-            Event.getAllEvents()
+
+        await queryClient.prefetchQuery(
+            GET_EVENTS_BY_CATEGORY,
+            () => Event.getEventsByCategory(session.user.userId),
+            { staleTime: 1 * 60 * 1000, cacheTime: 5 * 60 * 1000 }
         );
         return {
             props: {
                 dehydratedState: dehydrate(queryClient),
-                eventList: data,
             },
         };
     } catch (error) {

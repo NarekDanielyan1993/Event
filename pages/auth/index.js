@@ -42,7 +42,11 @@ const AuthPage = () => {
     const onSignUpHandler = async (formData) => {
         try {
             setIsLoading(true);
-            await apiRequest(METHODS.POST, '/api/auth/signup', formData);
+            await apiRequest({
+                method: METHODS.POST,
+                url: '/api/auth/signup',
+                body: formData,
+            });
             setIsLogin(true);
         } catch (error) {
             showBoundary(error);

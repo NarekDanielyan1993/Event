@@ -16,6 +16,8 @@ import Subscriber from '../news-letter/news-letter.model';
 
 import AWSService from 'lib/aws-service';
 import { authMiddleware } from 'lib/middlewares/auth';
+import { getServerSession } from 'next-auth';
+import { authOptions } from '../auth/[...nextauth]';
 import Event from './event.model';
 import {
     createEventValidationSchema,
@@ -36,7 +38,11 @@ export const config = {
 
 router.get(async (req, res) => {
     try {
-        const allEvents = await Event.getAllEvents();
+        const {
+            user: { userId },
+        } = await getServerSession(req, res, authOptions);
+        const allEvents = await Event.getEventsByCategory(userId);
+        console.log('allEvents', allEvents);
 
         res.status(200).json({ msg: 'success', events: allEvents });
     } catch (error) {
@@ -58,8 +64,12 @@ router.post(
                 );
             }
 
+            const {
+                user: { userId },
+            } = await getServerSession(req, res, authOptions);
             const newEvent = {
                 ...req.body,
+                userId,
                 imageId: file.newFilename,
             };
 

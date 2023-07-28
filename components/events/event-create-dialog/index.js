@@ -10,6 +10,9 @@ import { useMemo } from 'react';
 
 import useForm from 'hooks/useForm';
 
+import Loader from 'components/loader';
+import useDidUpdate from 'hooks/useDidUpdate';
+import { useCreateEvent, useUpdateEvent } from 'services/event';
 import validationSchema from './validationSchema';
 
 function EventDialogCreate({ isOpen, onCreate, onEdit, onClose, propData }) {
@@ -35,7 +38,30 @@ function EventDialogCreate({ isOpen, onCreate, onEdit, onClose, propData }) {
         };
     }, [propData]);
 
-    const { FormField, handleSubmit } = useForm({
+    const {
+        isLoading: isCreateLoading,
+        isSuccess: isCreateSuccess,
+        isError: isCreateError,
+        createEvent,
+    } = useCreateEvent();
+
+    const {
+        isLoading: isUpdateLoading,
+        isSuccess: isUpdateSuccess,
+        updateEvent,
+        isError: isUpdateError,
+    } = useUpdateEvent();
+
+    useDidUpdate(() => {
+        if (!isCreateLoading && !isCreateError && isCreateSuccess) {
+            handleClose();
+        }
+        if (!isUpdateLoading && !isUpdateError && isUpdateSuccess) {
+            handleClose();
+        }
+    }, [isCreateLoading, isUpdateLoading]);
+
+    const { FormField, handleSubmit, formState } = useForm({
         defaultValues,
         validationSchema,
     });
@@ -46,16 +72,39 @@ function EventDialogCreate({ isOpen, onCreate, onEdit, onClose, propData }) {
 
     const formSubmitHandler = async (data) => {
         if (propData) {
-            await onEdit(propData._id, data);
+            const formData = new FormData();
+            formData.append('title', data.title);
+            formData.append('description', data.description);
+            formData.append('location', data.location);
+            formData.append('date', data.date);
+            formData.append('file', data.file);
+            await updateEvent(propData._id, formData);
+            handleClose();
+            onEdit && (await onEdit());
         } else {
-            await onCreate(data);
+            const formData = new FormData();
+            formData.append('title', data.title);
+            formData.append('description', data.description);
+            formData.append('location', data.location);
+            formData.append('date', data.date);
+            formData.append('file', data.file);
+            await createEvent(formData);
+            handleClose();
+            onCreate && (await onCreate());
         }
-        handleClose();
     };
 
     return (
-        <Dialog fullWidth maxWidth="sm" open={isOpen}>
+        <Dialog
+            fullWidth
+            maxWidth="sm"
+            onClose={() => formState.isSubmitSuccessful}
+            open={isOpen}
+        >
             <form onSubmit={handleSubmit(formSubmitHandler)}>
+                {(isUpdateLoading || isCreateLoading) && (
+                    <Loader fixed={false} withOverlay={false} />
+                )}
                 <DialogTitle>{propData ? 'Edit' : 'Create'} Event</DialogTitle>
                 <DialogContent>
                     <Grid container spacing={2} sx={{ marginTop: '10px' }}>
