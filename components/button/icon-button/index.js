@@ -1,24 +1,43 @@
-import GoogleIcon from '@mui/icons-material/Google';
-import MenuIcon from '@mui/icons-material/Menu';
 import { IconButton as MuiIconButton, Tooltip } from '@mui/material';
-import { useMemo } from 'react';
 
-export const IconButton = ({ iconName, tooltipText = '', styles, onClick }) => {
-    const Icon = useMemo(() => {
-        switch (iconName) {
-            case 'google': {
-                return GoogleIcon;
-            }
-            case 'menu': {
-                return MenuIcon;
-            }
-        }
-    });
-    return (
+import { SvgIcon } from '@mui/material';
+import Delete from 'public/images/deleteIcon.svg';
+import Edit from 'public/images/editIcon.svg';
+import ErrorOutline from 'public/images/errorOutlineIcon.svg';
+import Google from 'public/images/googleIcon.svg';
+import Menu from 'public/images/menuIcon.svg';
+
+export const IconButton = ({
+    name,
+    size = 'sm',
+    tooltipText = '',
+    styles,
+    onClick,
+    as,
+    ...props
+}) => {
+    const iconTypes = {
+        delete: Delete,
+        edit: Edit,
+        google: Google,
+        errorOutline: ErrorOutline,
+        menu: Menu,
+    };
+    const Icon = iconTypes[name];
+    return as === 'icon' ? (
+        <SvgIcon component={Icon} inheritViewBox />
+    ) : (
         <Tooltip arrow color="primary" title={tooltipText}>
-            <MuiIconButton onClick={onClick} size="small" style={styles}>
-                <Icon />
+            <MuiIconButton
+                onClick={onClick}
+                size={size}
+                style={styles}
+                {...props}
+            >
+                <SvgIcon component={Icon} inheritViewBox />
             </MuiIconButton>
         </Tooltip>
     );
 };
+
+export default IconButton;

@@ -25,11 +25,17 @@ let nextConfig = () => {
         },
         pageExtensions: ['mdx', 'md', 'jsx', 'js', 'tsx', 'ts', 'mjs'],
         webpack: (config, { webpack, isServer }) => {
-            config.module.rules.push({
-                test: /\.mjs$/,
-                include: /node_modules/,
-                type: 'javascript/auto',
-            });
+            config.module.rules.push(
+                {
+                    test: /\.mjs$/,
+                    include: /node_modules/,
+                    type: 'javascript/auto',
+                },
+                {
+                    test: /\.svg$/,
+                    use: ['@svgr/webpack'],
+                }
+            );
 
             if (!isServer) {
                 config.resolve.fallback = {

@@ -90,6 +90,50 @@ const theme = createTheme({
             },
         },
     },
+    MuiButton: {
+        styleOverrides: {
+            root: {
+                fontSize: '1rem',
+                '@media (max-width: 320px)': {
+                    fontSize: '0.8rem', // Font size for screens up to 320px width (e.g., mobile portrait)
+                },
+                '@media (min-width: 321px) and (max-width: 600px)': {
+                    fontSize: '1rem', // Font size for screens between 321px and 600px width (e.g., mobile landscape)
+                },
+                '@media (min-width: 601px) and (max-width: 960px)': {
+                    fontSize: '1.2rem', // Font size for screens between 601px and 960px width (e.g., tablets)
+                },
+                '@media (min-width: 961px) and (max-width: 1280px)': {
+                    fontSize: '1.5rem', // Font size for screens between 961px and 1280px width (e.g., small laptops)
+                },
+                '@media (min-width: 1281px)': {
+                    fontSize: '2rem', // Font size for screens above 1280px width (e.g., large laptops and desktops)
+                },
+            },
+        },
+    },
+    MuiLink: {
+        styleOverrides: {
+            root: {
+                fontSize: '1rem',
+                '@media (max-width: 320px)': {
+                    fontSize: '0.8rem',
+                },
+                '@media (min-width: 321px) and (max-width: 600px)': {
+                    fontSize: '1rem',
+                },
+                '@media (min-width: 601px) and (max-width: 960px)': {
+                    fontSize: '1.2rem',
+                },
+                '@media (min-width: 961px) and (max-width: 1280px)': {
+                    fontSize: '1.5rem',
+                },
+                '@media (min-width: 1281px)': {
+                    fontSize: '2rem',
+                },
+            },
+        },
+    },
 });
 
 export default theme;

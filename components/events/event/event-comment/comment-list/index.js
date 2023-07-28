@@ -7,13 +7,17 @@ import StyledList from './style';
 const CommentList = forwardRef(
     ({ comments, onUpdateComments, onDeleteComments }, ref) => {
         useEffect(() => {
+            let timeout;
             if (ref.current) {
-                ref.current.scrollIntoView({
-                    behavior: 'smooth',
-                    block: 'start',
-                });
+                timeout = setTimeout(() => {
+                    ref.current?.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start',
+                    });
+                }, 0);
             }
-        }, []);
+            return () => clearTimeout(timeout);
+        }, [ref?.current]);
 
         return (
             <StyledList ref={ref}>
@@ -29,7 +33,7 @@ const CommentList = forwardRef(
                 ) : (
                     <NotFound
                         text="There are no comments to show."
-                        withIcon={false}
+                        withIcon={true}
                     />
                 )}
             </StyledList>

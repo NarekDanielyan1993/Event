@@ -40,6 +40,7 @@ function FormInput({
         helperText: error,
         type,
         label,
+        InputLabelProps: { shrink: true },
         ...rest,
     };
 

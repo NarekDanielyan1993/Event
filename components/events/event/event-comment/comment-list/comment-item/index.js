@@ -1,10 +1,8 @@
-import DeleteIcon from '@mui/icons-material/Delete';
-import EditIcon from '@mui/icons-material/Edit';
-import { Box, Button, IconButton, Typography } from '@mui/material';
+import { Box, Button, Typography } from '@mui/material';
+import IconButton from 'components/button/icon-button';
+import { useTruncateText } from 'hooks';
 import { useRouter } from 'next/router';
 import { useState } from 'react';
-
-import { useTruncateText } from 'hooks';
 import { CustomDate } from 'utils';
 import CommentDialogEdit from './comment-dialog-edit';
 import { StyledCommentWrapper } from './style';
@@ -47,14 +45,14 @@ function CommentItem({ comment, onDeleteComments, onUpdateComments }) {
                     <span>{' ago'}</span>
                 </Typography>
                 <Box>
-                    <IconButton onClick={() => setIsDialogOpen(true)}>
-                        <EditIcon />
-                    </IconButton>
                     <IconButton
+                        name="edit"
+                        onClick={() => setIsDialogOpen(true)}
+                    />
+                    <IconButton
+                        name="delete"
                         onClick={() => onDeleteComments(eventId, comment._id)}
-                    >
-                        <DeleteIcon />
-                    </IconButton>
+                    />
                 </Box>
             </Box>
             <Box>

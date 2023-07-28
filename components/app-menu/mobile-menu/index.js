@@ -24,7 +24,7 @@ export const MobileMenu = ({ onLogout }) => {
             {session ? (
                 <>
                     <IconButton
-                        iconName="menu"
+                        name="menu"
                         onClick={handleClick}
                         tooltipText="Menu"
                     />
