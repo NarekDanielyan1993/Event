@@ -22,15 +22,15 @@ export default function EventsPage() {
     const { isLoading: isDeleteLoading, deleteEvent } = useDeleteEvent();
 
     const { getEvents, data: eventList } = useGetEvents();
-
+    console.log('eventList', eventList);
     const [events, setEvents] = useState(eventList);
 
     const { showBoundary } = useErrorBoundary();
 
     const createEventHandler = async () => {
         try {
-            const allEvents = await getEvents();
-            setEvents(allEvents);
+            // const allEvents = await getEvents();
+            // setEvents(allEvents);s
         } catch (error) {
             showBoundary(error);
         }

@@ -17,6 +17,10 @@ let nextConfig = () => {
                     hostname: 'zingy-hotteok-06d64f',
                     pathname: '/api/images/**',
                 },
+                {
+                    hostname: 'nice-beach-064604e10.3.azurestaticapps.net',
+                    pathname: '/api/images/**',
+                },
             ],
         },
         pageExtensions: ['mdx', 'md', 'jsx', 'js', 'tsx', 'ts', 'mjs'],
