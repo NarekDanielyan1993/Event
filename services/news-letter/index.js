@@ -44,11 +44,11 @@ export const useUnsubscribeFromEmail = () => {
     const unsubscribeFromEmail = async (data) => {
         try {
             setIsLoading(true);
-            await apiRequest(
-                METHODS.DELETE,
-                `/${NEWS_LETTER_PATHS.UNSUBSCRIBE}`,
-                data
-            );
+            await apiRequest({
+                method: METHODS.DELETE,
+                url: `/${NEWS_LETTER_PATHS.UNSUBSCRIBE}`,
+                body: data,
+            });
             enqueueSnackbar(
                 'You have been successfully unsubscribed from our notifications.',
                 {
