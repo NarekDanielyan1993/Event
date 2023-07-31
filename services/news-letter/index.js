@@ -16,11 +16,11 @@ const useRegisterMailForNews = () => {
     const registerMailForNews = async (data) => {
         try {
             setIsLoading(true);
-            await apiRequest(
-                METHODS.POST,
-                `${NEWS_LETTER_PATHS.NEWS_LETTER}`,
-                data
-            );
+            await apiRequest({
+                method: METHODS.POST,
+                url: `${NEWS_LETTER_PATHS.NEWS_LETTER}`,
+                body: data,
+            });
             enqueueSnackbar('You successfully registered.', {
                 variant: 'success',
             });
