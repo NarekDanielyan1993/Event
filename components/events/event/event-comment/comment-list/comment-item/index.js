@@ -1,4 +1,5 @@
-import { Box, Button, Typography } from '@mui/material';
+import { Box, Typography } from '@mui/material';
+import Button from 'components/button';
 import IconButton from 'components/button/icon-button';
 import { useTruncateText } from 'hooks';
 import { useRouter } from 'next/router';
@@ -26,25 +27,26 @@ function CommentItem({ comment, onDeleteComments, onUpdateComments }) {
                 justifyContent="space-between"
             >
                 <Box
-                    alignItems="center"
-                    display="flex"
-                    flexDirection="column"
-                    justifyContent="flex-end"
+                    sx={{
+                        display: 'block',
+                        width: (theme) => theme.spacing(30),
+                        overflow: 'hidden',
+                        textOverflow: 'ellipsis',
+                    }}
                 >
-                    <Typography component="h3" variant="h3">
-                        {comment.name}
+                    <Typography noWrap>{comment.name}</Typography>
+                    <Typography
+                        component="span"
+                        marginRight="auto"
+                        sx={{ fontSize: '11px' }}
+                        variant="body1"
+                    >
+                        <b>Posted:</b>{' '}
+                        {CustomDate.timeElapsed(comment.createdDate)}
+                        <span>{' ago'}</span>
                     </Typography>
                 </Box>
-                <Typography
-                    component="span"
-                    marginRight="auto"
-                    sx={{ fontSize: '11px' }}
-                    variant="subtitle2"
-                >
-                    <b>Posted:</b> {CustomDate.timeElapsed(comment.createdDate)}
-                    <span>{' ago'}</span>
-                </Typography>
-                <Box>
+                <Box display="flex">
                     <IconButton
                         name="edit"
                         onClick={() => setIsDialogOpen(true)}
@@ -55,16 +57,12 @@ function CommentItem({ comment, onDeleteComments, onUpdateComments }) {
                     />
                 </Box>
             </Box>
-            <Box>
+            <Box sx={{ wordBreak: 'break-word' }}>
                 <Typography component="span">{truncatedText}</Typography>
                 {shouldTruncate && (
                     <Button
+                        className="textToggle"
                         onClick={handleExpand}
-                        sx={{
-                            display: 'block',
-                            fontSize: '10px',
-                            padding: '5px',
-                        }}
                         variant="contained"
                     >
                         {isExpanded ? 'show less' : 'show more'}

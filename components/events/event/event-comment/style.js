@@ -28,8 +28,8 @@ export const StyledEventButton = styled(Button)(() => ({
         color: 'white',
     },
 
-    '&:disabled': {
-        backgroundColor: 'lightgray',
-        color: 'white',
-    },
+    // '&:disabled': {
+    //     backgroundColor: 'lightgray',
+    //     color: 'white',
+    // },
 }));

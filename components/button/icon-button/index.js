@@ -13,7 +13,6 @@ export const IconButton = ({
     tooltipText = '',
     styles,
     onClick,
-    as,
     ...props
 }) => {
     const iconTypes = {
@@ -24,9 +23,7 @@ export const IconButton = ({
         menu: Menu,
     };
     const Icon = iconTypes[name];
-    return as === 'icon' ? (
-        <SvgIcon component={Icon} inheritViewBox />
-    ) : (
+    return (
         <Tooltip arrow color="primary" title={tooltipText}>
             <MuiIconButton
                 onClick={onClick}

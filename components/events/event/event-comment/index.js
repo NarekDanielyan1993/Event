@@ -1,5 +1,6 @@
 import { useRef, useState } from 'react';
 
+import Button from 'components/button';
 import Loader from 'components/loader';
 import { useErrorBoundary } from 'react-error-boundary';
 import {
@@ -10,7 +11,7 @@ import {
 } from 'services/comment';
 import EventCommentForm from './comment-form';
 import CommentList from './comment-list/index';
-import { StyledEventButton, StyledEventCommentContainer } from './style';
+import { StyledEventCommentContainer } from './style';
 
 function EventComments({ eventId }) {
     const { showBoundary } = useErrorBoundary();
@@ -91,9 +92,9 @@ function EventComments({ eventId }) {
                 isDeleteCommentLoading ||
                 isUpdateCommentLoading ||
                 isCommentsLoading) && <Loader />}
-            <StyledEventButton onClick={getCommentsHandler}>
+            <Button className="toggle" fullWidth onClick={getCommentsHandler}>
                 {`${showComments ? 'Hide Comments' : 'Show Comments'} `}
-            </StyledEventButton>
+            </Button>
             <EventCommentForm
                 key={`${commentList.length}`}
                 onSubmit={onSubmit}

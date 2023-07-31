@@ -40,7 +40,13 @@ function FormInput({
         helperText: error,
         type,
         label,
-        InputLabelProps: { shrink: true },
+        fullWidth: true,
+        inputProps: {
+            autocomplete: 'new-password',
+            form: {
+                autocomplete: 'off',
+            },
+        },
         ...rest,
     };
 

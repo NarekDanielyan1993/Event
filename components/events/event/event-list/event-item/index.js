@@ -1,11 +1,11 @@
-import { Button } from '@mui/material';
 import { useState } from 'react';
 
 import EventDialogCreate from 'components/events/event-create-dialog';
 import { CustomDate, loadImage } from 'utils';
 
+import Button from 'components/button';
+import Link from 'components/button/link';
 import { useSession } from 'next-auth/react';
-import EventButton from './event-button';
 import {
     StyledContent,
     StyledEventCard,
@@ -60,16 +60,10 @@ function EventItem({ event, id, onUpdateEvent, onDeleteEvent, onlyView }) {
                                 onEdit={onUpdateEvent}
                                 propData={event}
                             />
-                            <EventButton
-                                buttonText="Detail"
-                                href={`/events/${id}`}
-                            />
+                            <Link href={`/events/${id}`}>Detail</Link>
                         </>
                     ) : (
-                        <EventButton
-                            buttonText="Detail"
-                            href={`/events/${id}`}
-                        />
+                        <Link href={`/events/${id}`}>Detail</Link>
                     )}
                 </div>
             </StyledOverlay>

@@ -58,6 +58,7 @@ export default function EventContent({
     return (
         <Box sx={{ width: '100%', maxWidth: '60%', margin: '0 auto' }}>
             <Tabs
+                allowScrollButtonsMobile
                 centered
                 onChange={handleChange}
                 TabIndicatorProps={{

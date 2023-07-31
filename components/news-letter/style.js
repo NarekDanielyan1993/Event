@@ -13,11 +13,10 @@ export const StyledNewsLetterTitle = styled('h2')({
 });
 
 export const StyledNewsLetterForm = styled('form')({
-    height: '96px',
-    marginTop: '15px',
     display: 'flex',
     padding: '29px 12px',
     backgroundColor: 'white',
     borderRadius: '2px',
+    alignItems: 'flex-start',
     gap: '5px',
 });

@@ -1,7 +1,6 @@
-import { StyledButton, StyledLink } from 'components/Layout/main-header/style';
-
+import Button from 'components/button';
+import Link from 'components/button/link';
 import { useSession } from 'next-auth/react';
-import Link from 'next/link';
 import { StyledNav, StyledRightSide } from './style';
 
 export const DesktopMenu = ({ onLogout }) => {
@@ -11,20 +10,20 @@ export const DesktopMenu = ({ onLogout }) => {
         <StyledNav>
             {session && (
                 <Link href="/" passHref>
-                    <StyledLink>NEXT EVENTS</StyledLink>
+                    NEXT EVENTS
                 </Link>
             )}
             <StyledRightSide>
                 {session && (
                     <Link href="/events" passHref>
-                        <StyledLink>All events</StyledLink>
+                        All events
                     </Link>
                 )}
                 {session ? (
-                    <StyledButton onClick={onLogout}>Log out</StyledButton>
+                    <Button onClick={onLogout}>Log out</Button>
                 ) : (
                     <Link href="/auth" passHref>
-                        <StyledLink>Log in</StyledLink>
+                        Log in
                     </Link>
                 )}
             </StyledRightSide>

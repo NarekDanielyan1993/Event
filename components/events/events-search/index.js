@@ -3,13 +3,13 @@ import useForm from 'hooks/useForm';
 
 import validationSchema from './validationSchema';
 
-import SubmitButton from 'components/button/submit-button';
+import Button from 'components/button';
 import Loader from 'components/loader';
 import useDidUpdate from 'hooks/useDidUpdate';
 import { useErrorBoundary } from 'react-error-boundary';
 import { useFilterEvents } from 'services/event';
 import { isValidDateObject } from 'utils';
-import { FormContainer, StyledButton } from './style';
+import { FormContainer } from './style';
 
 function EventsSearch({ setEvents, onClearFilter, category }) {
     const { showBoundary } = useErrorBoundary();
@@ -60,20 +60,20 @@ function EventsSearch({ setEvents, onClearFilter, category }) {
                 views: ['year', 'month'],
                 format: MM_YYYY,
             })}
-            <SubmitButton
+            <Button
+                className="submit"
                 disabled={isValidDateObject(date)}
-                sx={{ flexGrow: 1, minWidth: '150px' }}
                 type="submit"
             >
                 Find Events
-            </SubmitButton>
-            <StyledButton
+            </Button>
+            <Button
+                className="clear"
                 disabled={isValidDateObject(date)}
                 onClick={clearFilter}
-                variant="contained"
             >
-                Clear filters
-            </StyledButton>
+                Clear
+            </Button>
         </FormContainer>
     );
 }

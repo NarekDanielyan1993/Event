@@ -1,7 +1,6 @@
 import useForm from 'hooks/useForm';
 
-import { Box } from '@mui/material';
-import SubmitButton from 'components/button/submit-button';
+import Button from 'components/button';
 import {
     StyledNewsLetterContainer,
     StyledNewsLetterForm,
@@ -28,15 +27,13 @@ function NewsLetter({ formSubmitHandler }) {
                 Sign up to stay updated
             </StyledNewsLetterTitle>
             <StyledNewsLetterForm onSubmit={handleSubmit(onFormSubmit)}>
-                <Box sx={{ flexGrow: 3 }}>
-                    {FormField({
-                        name: 'email',
-                        label: 'Type Email',
-                    })}
-                </Box>
-                <SubmitButton sx={{ flexGrow: 2 }} type="submit">
+                {FormField({
+                    name: 'email',
+                    label: 'Type Email',
+                })}
+                <Button className="submit" type="submit">
                     Register
-                </SubmitButton>
+                </Button>
             </StyledNewsLetterForm>
         </StyledNewsLetterContainer>
     );

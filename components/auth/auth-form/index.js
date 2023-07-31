@@ -1,6 +1,7 @@
-import { Button, Typography } from '@mui/material';
 import useForm from 'hooks/useForm.js';
 
+import { Typography } from '@mui/material';
+import Button from 'components/button';
 import { AuthProvider } from '../auth-providers';
 import { StyledContainer, StyledForm } from './style';
 import { validationSchema } from './validationSchema';
@@ -33,7 +34,7 @@ export default function AuthForm({
                     type: 'password',
                     label: 'Password',
                 })}
-                <Button color="primary" type="submit" variant="contained">
+                <Button type="submit" variant="contained">
                     {isLogin ? 'Login' : 'Register'}
                 </Button>
                 <AuthProvider onGoolgeLogIn={onGoolgeLogIn} />

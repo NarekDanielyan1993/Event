@@ -18,14 +18,22 @@ const theme = createTheme({
             lighter: '#81C784',
         },
         secondary: {
-            main: '#2196F3',
+            main: '#00FFFF',
+            darken: '#00CCCC',
         },
         error: {
-            main: '#FF5722',
+            main: '#CC0000',
+            darken: '#990000',
         },
         text: {
-            primary: '#333',
-            secondary: '#FFFFFF',
+            main: '#333',
+        },
+        common: {
+            white: '#FFFFFF',
+            black: '#000000',
+        },
+        disabled: {
+            main: '#BDBDBD',
         },
         background: {
             main: '#8BC34A',
@@ -46,33 +54,7 @@ const theme = createTheme({
             longer: '.3s',
         },
     },
-    typography: {
-        fontFamily: 'Arial, sans-serif',
-        h1: {
-            fontSize: '2.5rem',
-            fontWeight: 'bold',
-            color: '#333',
-        },
-        h2: {
-            fontSize: '2rem',
-            fontWeight: 'bold',
-            color: '#333',
-        },
-        h3: {
-            fontSize: '1.5rem',
-            fontWeight: 600,
-        },
-        h4: {
-            fontSize: '1.2rem',
-            fontWeight: 600,
-        },
-        h5: {
-            fontSize: '1rem',
-            fontWeight: 600,
-        },
-    },
-    shadows: [
-        'none',
+    boxShadows: [
         '0px 2px 4px rgba(0, 0, 0, 0.2)',
         '0px 4px 8px rgba(0, 0, 0, 0.2)',
         '0px 8px 16px rgba(0, 0, 0, 0.2)',
@@ -89,47 +71,99 @@ const theme = createTheme({
                 },
             },
         },
-    },
-    MuiButton: {
-        styleOverrides: {
-            root: {
-                fontSize: '1rem',
-                '@media (max-width: 320px)': {
-                    fontSize: '0.8rem', // Font size for screens up to 320px width (e.g., mobile portrait)
-                },
-                '@media (min-width: 321px) and (max-width: 600px)': {
-                    fontSize: '1rem', // Font size for screens between 321px and 600px width (e.g., mobile landscape)
-                },
-                '@media (min-width: 601px) and (max-width: 960px)': {
-                    fontSize: '1.2rem', // Font size for screens between 601px and 960px width (e.g., tablets)
-                },
-                '@media (min-width: 961px) and (max-width: 1280px)': {
-                    fontSize: '1.5rem', // Font size for screens between 961px and 1280px width (e.g., small laptops)
-                },
-                '@media (min-width: 1281px)': {
-                    fontSize: '2rem', // Font size for screens above 1280px width (e.g., large laptops and desktops)
+        MuiButton: {
+            styleOverrides: {
+                root: ({ theme }) => {
+                    return {
+                        '&:disabled': {
+                            opacity: '0.4!important',
+                        },
+                        whiteSpace: 'nowrap',
+                        minWidth: 'max-content',
+                        padding: `${theme.typography.pxToRem(
+                            10
+                        )} ${theme.typography.pxToRem(14)}`,
+                        textTransform: 'uppercase',
+                        [theme.breakpoints.up('xs')]: {
+                            fontSize: theme.typography.pxToRem(8),
+                            lineHeight: theme.typography.pxToRem(20),
+                        },
+                        [theme.breakpoints.up('sm')]: {
+                            fontSize: theme.typography.pxToRem(12),
+                            lineHeight: theme.typography.pxToRem(20),
+                        },
+                        [theme.breakpoints.up('md')]: {
+                            fontSize: theme.typography.pxToRem(14),
+                            lineHeight: theme.typography.pxToRem(20),
+                        },
+                        [theme.breakpoints.up('lg')]: {
+                            fontSize: theme.typography.pxToRem(16),
+                            lineHeight: theme.typography.pxToRem(22),
+                        },
+                    };
                 },
             },
         },
-    },
-    MuiLink: {
-        styleOverrides: {
-            root: {
-                fontSize: '1rem',
-                '@media (max-width: 320px)': {
-                    fontSize: '0.8rem',
+        MuiLink: {
+            styleOverrides: {
+                root: ({ theme }) => {
+                    return {
+                        padding: `${theme.typography.pxToRem(
+                            10
+                        )} ${theme.typography.pxToRem(12)}`,
+                        textTransform: 'uppercase',
+                        [theme.breakpoints.up('xs')]: {
+                            fontSize: theme.typography.pxToRem(8),
+                            lineHeight: theme.typography.pxToRem(20),
+                        },
+                        [theme.breakpoints.up('sm')]: {
+                            fontSize: theme.typography.pxToRem(12),
+                            lineHeight: theme.typography.pxToRem(20),
+                        },
+                        [theme.breakpoints.up('md')]: {
+                            fontSize: theme.typography.pxToRem(14),
+                            lineHeight: theme.typography.pxToRem(22),
+                        },
+                        [theme.breakpoints.up('lg')]: {
+                            fontSize: theme.typography.pxToRem(16),
+                            lineHeight: theme.typography.pxToRem(24),
+                        },
+                    };
                 },
-                '@media (min-width: 321px) and (max-width: 600px)': {
-                    fontSize: '1rem',
+            },
+        },
+        MuiTab: {
+            styleOverrides: {
+                root: ({ theme }) => {
+                    return {
+                        color: theme.palette.common.white,
+                        [theme.breakpoints.down('sm')]: {
+                            minHeight: theme.spacing(2),
+                            fontSize: theme.spacing(1.2),
+                        },
+                    };
                 },
-                '@media (min-width: 601px) and (max-width: 960px)': {
-                    fontSize: '1.2rem',
+            },
+        },
+        MuiTabs: {
+            styleOverrides: {
+                flexContainer: ({ theme }) => {
+                    return {
+                        [theme.breakpoints.down('sm')]: {
+                            orientation: 'vertical',
+                        },
+                    };
                 },
-                '@media (min-width: 961px) and (max-width: 1280px)': {
-                    fontSize: '1.5rem',
-                },
-                '@media (min-width: 1281px)': {
-                    fontSize: '2rem',
+            },
+        },
+        MuiMenuItem: {
+            styleOverrides: {
+                root: ({ theme }) => {
+                    return {
+                        [theme.breakpoints.down('sm')]: {
+                            minHeight: theme.spacing(1),
+                        },
+                    };
                 },
             },
         },

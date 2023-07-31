@@ -1,8 +1,8 @@
 import { Menu, MenuItem } from '@mui/material';
-import { StyledButton, StyledLink } from 'components/Layout/main-header/style';
+import Button from 'components/button';
 import { IconButton } from 'components/button/icon-button';
+import Link from 'components/button/link';
 import { useSession } from 'next-auth/react';
-import Link from 'next/link';
 import { useState } from 'react';
 import { StyledMobileMenu } from './style';
 
@@ -42,7 +42,7 @@ export const MobileMenu = ({ onLogout }) => {
                             sx: {
                                 overflow: 'visible',
                                 filter: 'drop-shadow(0px 2px 8px rgba(0,0,0,0.32))',
-                                mt: 1.5,
+                                mt: 1,
                             },
                         }}
                         transformOrigin={{
@@ -51,28 +51,19 @@ export const MobileMenu = ({ onLogout }) => {
                         }}
                     >
                         <MenuItem>
-                            <Link href="/" passHref>
-                                <StyledLink>NEXT EVENTS</StyledLink>
-                            </Link>
+                            <Link href="/">NEXT EVENTS</Link>
                         </MenuItem>
                         <MenuItem>
-                            <Link href="/events" passHref>
-                                <StyledLink>All events</StyledLink>
-                            </Link>
+                            <Link href="/events">All events</Link>
                         </MenuItem>
                         <MenuItem>
-                            <StyledButton onClick={onLogout}>
-                                Log out
-                            </StyledButton>
+                            <Button onClick={onLogout}>Log out</Button>
                         </MenuItem>
                     </Menu>
                 </>
             ) : (
-                <Link href="/auth" passHref>
-                    <StyledLink>Log in</StyledLink>
-                </Link>
+                <Link href="/auth">Log in</Link>
             )}
-            ;
         </StyledMobileMenu>
     );
 };

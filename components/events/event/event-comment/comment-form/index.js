@@ -1,7 +1,7 @@
 import useForm from 'hooks/useForm';
 
 import { Box } from '@mui/material';
-import SubmitButton from 'components/button/submit-button';
+import Button from 'components/button';
 import StyledForm from './style';
 import validationSchema from './validationSchema';
 
@@ -21,7 +21,7 @@ function EventCommentForm({ onSubmit }) {
 
     return (
         <StyledForm onSubmit={handleSubmit(formSubmitHandler)}>
-            <Box display={'flex'} gap={'10px'}>
+            <Box display="flex" gap="10px">
                 {FormField({
                     name: 'name',
                     label: 'Name',
@@ -36,9 +36,9 @@ function EventCommentForm({ onSubmit }) {
                 type: 'textarea',
                 label: 'Text',
             })}
-            <SubmitButton fullWidth type="submit">
+            <Button className="submit" fullWidth type="submit">
                 Submit
-            </SubmitButton>
+            </Button>
         </StyledForm>
     );
 }
