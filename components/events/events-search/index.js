@@ -4,16 +4,11 @@ import useForm from 'hooks/useForm';
 import validationSchema from './validationSchema';
 
 import Button from 'components/button';
-import Loader from 'components/loader';
 import useDidUpdate from 'hooks/useDidUpdate';
-import { useErrorBoundary } from 'react-error-boundary';
-import { useFilterEvents } from 'services/event';
 import { isValidDateObject } from 'utils';
 import { FormContainer } from './style';
 
-function EventsSearch({ setEvents, onClearFilter, category }) {
-    const { showBoundary } = useErrorBoundary();
-
+function EventsSearch({ category, setFilterData }) {
     const { handleSubmit, FormField, watch, setValue } = useForm({
         validationSchema,
         defaultValues: {
@@ -23,22 +18,8 @@ function EventsSearch({ setEvents, onClearFilter, category }) {
 
     const date = watch('date');
 
-    const { isLoading: isFilterDatesLoading, getFilteredEvents } =
-        useFilterEvents(date, category);
-
-    const onFilterEventsHandler = async () => {
-        try {
-            const filteredFilters = await getFilteredEvents();
-            setEvents((prev) =>
-                prev.map((item) =>
-                    item.id === category
-                        ? { ...item, data: filteredFilters }
-                        : item
-                )
-            );
-        } catch (error) {
-            showBoundary(error);
-        }
+    const onFilterEventsHandler = async ({ date }) => {
+        setFilterData(date);
     };
 
     useDidUpdate(() => {
@@ -46,13 +27,12 @@ function EventsSearch({ setEvents, onClearFilter, category }) {
     }, [category]);
 
     const clearFilter = () => {
-        onClearFilter();
         setValue('date', {});
+        setFilterData('');
     };
 
     return (
         <FormContainer onSubmit={handleSubmit(onFilterEventsHandler)}>
-            {isFilterDatesLoading && <Loader />}
             {FormField({
                 type: 'custom-date',
                 name: 'date',

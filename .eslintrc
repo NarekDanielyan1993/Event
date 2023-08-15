@@ -1,16 +1,17 @@
 {
   "env": {
-    "browser": true,
-    "commonjs": true,
-    "es2021": true,
-    "node": true
+      "browser": true,
+      "commonjs": true,
+      "es2021": true,
+      "node": true,
   },
   "extends": [
     "eslint:recommended",
     "plugin:react/recommended",
     "plugin:react-hooks/recommended",
     "next/core-web-vitals",
-    "plugin:prettier/recommended"
+    "plugin:prettier/recommended",
+    "plugin:testing-library/react"
   ],
   "parserOptions": {
     "ecmaFeatures": {
@@ -20,6 +21,14 @@
     "sourceType": "module"
   },
   "plugins": ["react"],
+  "overrides": [
+    {
+      "files": [
+          "**/tests__/**/*.[jt]s?(x)",
+          "**/?(*.)+(spec | test).[jt]s?(x)"
+      ]
+    }
+  ],
   "rules": {
     "no-console": "warn",
     "dot-notation": "error",

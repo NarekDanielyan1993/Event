@@ -6,6 +6,7 @@ import EventSummary from 'components/event-detail/event-summary';
 import EventComments from 'components/events/event/event-comment';
 import Loader from 'components/loader';
 import NotFound from 'components/not-found';
+import { SESSION_STATUS } from 'constant';
 import { useSession } from 'next-auth/react';
 import Event from 'pages/api/events/event.model';
 
@@ -28,9 +29,9 @@ export default function EventDetailPage({ event }) {
                         imageId={event.imageId}
                     />
                     <EventContent>{event.description}</EventContent>
-                    {status === 'loading' ? (
+                    {status === SESSION_STATUS.LOADING ? (
                         <Loader fixed={false} withOverlay={false} />
-                    ) : status === 'authenticated' ? (
+                    ) : status === SESSION_STATUS.AUTHENTICATED ? (
                         <EventComments eventId={event._id} />
                     ) : (
                         <NotFound text="Authorize to leave a comment." />

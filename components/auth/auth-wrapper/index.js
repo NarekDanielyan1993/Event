@@ -1,14 +1,26 @@
-import Loader from 'components/loader';
+import { AUTH_ROUTES } from 'constant';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/router';
 
-export const AuthWrapper = ({ children }) => {
-    const router = useRouter();
+const withAuth =
+    ({ path = AUTH_ROUTES.SUCCESS }) =>
+    (WrappedComponent) => {
+        const Wrapped = (props) => {
+            const { data: session } = useSession();
+            const router = useRouter();
 
-    const { status } = useSession({
-        required: true,
-        onUnauthenticated: () => router.push('/auth'),
-    });
+            if (session) {
+                return router.push(path);
+            }
 
-    return 'loading' === status ? <Loader /> : children;
-};
+            // if (status === SESSION_STATUS.LOADING) {
+            //     return <Loader />;
+            // }
+
+            return <WrappedComponent {...props} />;
+        };
+
+        return Wrapped;
+    };
+
+export default withAuth;

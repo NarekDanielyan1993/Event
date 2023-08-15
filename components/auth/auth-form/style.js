@@ -1,11 +1,10 @@
-import { Container } from '@mui/material';
-import { styled } from '@mui/system';
+import { styled } from '@mui/material/styles';
 
-const StyledContainer = styled(Container)(() => ({
+const StyledAuthContainer = styled('div')(() => ({
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
-    height: '100vh',
+    height: 'calc(100vh - 80px)'
 }));
 
 const StyledForm = styled('form')(({ theme }) => ({
@@ -17,7 +16,7 @@ const StyledForm = styled('form')(({ theme }) => ({
     display: 'flex',
     flexDirection: 'column',
     gap: '16px',
-    boxShadow: theme.shadows[2],
+    // boxShadow: theme.boxShadows[2],
 }));
 
-export { StyledContainer, StyledForm };
+export { StyledAuthContainer, StyledForm };

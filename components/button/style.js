@@ -1,11 +1,17 @@
 import { Button } from '@mui/material';
-import { darken, styled } from '@mui/system';
+import { darken, styled } from '@mui/material/styles';
 
 const StyledButton = styled(Button)(({ theme }) => ({
     '&': {
-        transition: '0.8s ease',
+        transition: '0.5s ease',
         '&:hover': {
-            color: darken(theme.palette.primary.main, 0.2),
+            color: darken(theme.palette.primary.main, 0.4),
+        },
+    },
+    '&.auth': {
+        color: theme.palette.common.white,
+        '&:hover': {
+            backgroundColor: darken(theme.palette.primary.main, 0.4),
         },
     },
     '&.clear': {

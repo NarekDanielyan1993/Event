@@ -1,4 +1,4 @@
-import { styled } from '@mui/system';
+import { styled } from '@mui/material/styles';
 
 const ErrorContainer = styled('div')({
     padding: 4,

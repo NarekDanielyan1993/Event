@@ -1,5 +1,5 @@
-import { Typography } from '@mui/material';
-import { Box, styled } from '@mui/system';
+import { Box, Typography } from '@mui/material';
+import { styled } from '@mui/material/styles';
 import Image from 'next/image';
 
 export const StyledEventCard = styled('div')(({ theme }) => ({

@@ -1,12 +1,12 @@
-import { useMediaQuery } from '@mui/material';
+import { Typography, useMediaQuery } from '@mui/material';
 import Box from '@mui/material/Box';
 import Tab from '@mui/material/Tab';
 import Tabs from '@mui/material/Tabs';
-import { useTheme } from '@mui/system';
+import { useTheme } from '@mui/material/styles';
 import Loader from 'components/loader';
-import { useErrorBoundary } from 'react-error-boundary';
-import { useGetEvents } from 'services/event';
+import { usePaginatedEvents } from 'services/event';
 import EventList from '../event/event-list';
+import EventListContainer from '../event/event-list/event-list-container';
 
 function CustomTabPanel(props) {
     const { children, value, index, ...other } = props;
@@ -31,32 +31,31 @@ function a11yProps(index) {
 }
 
 export default function EventContent({
-    eventData,
     deleteEventHandler,
     updateEventHandler,
-    setEvents,
     setCategory,
     category,
+    filterData,
+    setFilterData,
 }) {
-    const { isLoading, getEvents } = useGetEvents();
-
     const theme = useTheme();
     const matches = useMediaQuery(theme.breakpoints.up('sm'));
 
-    const { showBoundary } = useErrorBoundary();
+    const {
+        data: eventData,
+        isLoading,
+        isFetchingNextPage,
+        hasNextPage,
+        sentinelRef,
+    } = usePaginatedEvents(category, filterData, true);
 
     const handleChange = async (event, newValue) => {
-        try {
-            setCategory(newValue);
-            const allEvents = await getEvents();
-            setEvents(allEvents);
-        } catch (error) {
-            showBoundary(error);
-        }
+        setCategory(newValue);
+        setFilterData('');
     };
 
     return (
-        <Box sx={{ width: '100%', maxWidth: '60%', margin: '0 auto' }}>
+        <>
             <Tabs
                 allowScrollButtonsMobile
                 centered
@@ -66,35 +65,33 @@ export default function EventContent({
                 }}
                 value={category}
             >
-                {eventData.map((category, index) => {
-                    return (
-                        <Tab
-                            key={category.label}
-                            label={category.label}
-                            {...a11yProps(index)}
-                        />
-                    );
-                })}
+                {eventData &&
+                    eventData?.labels.map((label, index) => {
+                        return (
+                            <Tab
+                                key={label}
+                                label={label}
+                                {...a11yProps(index)}
+                            />
+                        );
+                    })}
             </Tabs>
             {isLoading ? (
                 <Loader />
             ) : (
-                eventData.map((event, index) => {
-                    return (
-                        <CustomTabPanel
-                            index={index}
-                            key={event.label}
-                            value={category}
-                        >
-                            <EventList
-                                items={event.data}
-                                onDeleteEvent={deleteEventHandler}
-                                onUpdateEvent={updateEventHandler}
-                            />
-                        </CustomTabPanel>
-                    );
-                })
+                <CustomTabPanel index={category} value={category}>
+                    <EventListContainer>
+                        <EventList
+                            items={eventData?.data}
+                            onDeleteEvent={deleteEventHandler}
+                            onUpdateEvent={updateEventHandler}
+                        />
+                    </EventListContainer>
+                </CustomTabPanel>
             )}
-        </Box>
+            <Typography ref={sentinelRef}>
+                {isFetchingNextPage && hasNextPage && 'Loading...'}
+            </Typography>
+        </>
     );
 }

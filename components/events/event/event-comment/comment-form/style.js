@@ -1,4 +1,4 @@
-import { styled } from '@mui/system';
+import { styled } from '@mui/material/styles';
 
 const StyledForm = styled('form')(({ theme }) => ({
     display: 'flex',

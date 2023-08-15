@@ -1,4 +1,4 @@
-import { styled } from '@mui/system';
+import { styled } from '@mui/material/styles';
 
 export const StyledList = styled('form')(() => ({
     marginTop: '20px',

@@ -1,5 +1,5 @@
 import TextField from '@mui/material/TextField';
-import { darken, styled } from '@mui/system';
+import { darken, styled } from '@mui/material/styles';
 
 export const styleMuiTextField = (theme) => ({
     '& textarea': {

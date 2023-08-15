@@ -1,21 +1,23 @@
 /* eslint-disable no-useless-catch */
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { EVENTS_PATHS, METHODS } from 'constant';
-import { useMutation, useQuery, useQueryClient } from 'react-query';
 import { apiRequest } from 'utils';
 
 export const GET_COMMENTS = 'GET_COMMENTS';
 
 const useGetComments = (eventId) => {
-    const { isLoading, refetch, isFetched } = useQuery(
-        [GET_COMMENTS, { eventId }],
-        async ({ queryKey: [, { eventId }] }) => {
-            const {
-                data: { comments },
-            } = await apiRequest({
-                method: METHODS.GET,
-                url: `${EVENTS_PATHS.EVENT_COMMENTS}/${eventId}`,
-            });
-            return comments;
+    const { isLoading, refetch } = useQuery(
+        {
+            queryKey: [GET_COMMENTS, eventId],
+            queryFn: async ({ queryKey: [, eventId] }) => {
+                const {
+                    data: { comments },
+                } = await apiRequest({
+                    method: METHODS.GET,
+                    url: `${EVENTS_PATHS.EVENT_COMMENTS}/${eventId}`,
+                });
+                return comments;
+            },
         },
         {
             enabled: false,
@@ -31,7 +33,7 @@ const useGetComments = (eventId) => {
         }
     };
 
-    return { isLoading: isLoading, isFetched, getComments };
+    return { isLoading, getComments };
 };
 
 const useCreateComment = () => {

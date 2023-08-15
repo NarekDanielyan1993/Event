@@ -8,23 +8,13 @@ export const DesktopMenu = ({ onLogout }) => {
 
     return (
         <StyledNav>
-            {session && (
-                <Link href="/" passHref>
-                    NEXT EVENTS
-                </Link>
-            )}
+            {session && <Link href="/">NEXT EVENTS</Link>}
             <StyledRightSide>
-                {session && (
-                    <Link href="/events" passHref>
-                        All events
-                    </Link>
-                )}
+                {session && <Link href="/events">All events</Link>}
                 {session ? (
                     <Button onClick={onLogout}>Log out</Button>
                 ) : (
-                    <Link href="/auth" passHref>
-                        Log in
-                    </Link>
+                    <Link href="/auth">Log in</Link>
                 )}
             </StyledRightSide>
         </StyledNav>

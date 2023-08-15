@@ -11,6 +11,13 @@ export const MONGO_ERRORS = {
     },
 };
 
+export const AUTH_ERROR_TYPES = {
+    NOT_FOUND: {
+        msg: 'User not found',
+        status: 404
+    }
+}
+
 // DEFAULT ERRORS
 
 export const COMMON_ERROR_TYPES = {
@@ -56,11 +63,6 @@ export const COMMON_ERROR_TYPES = {
         name: 'MongoServerError',
         title: 'Internal Server Error',
     },
-};
-
-export const GRID_FS_STORAGE_ERROR = {
-    msg: 'Could not connect to grid fs storage.',
-    status: 500,
 };
 
 export const FILE_ERROR_TYPES = {

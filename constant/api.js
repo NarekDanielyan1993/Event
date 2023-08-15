@@ -22,6 +22,26 @@ export const COLLECTION_NAMES = {
     COMMENTS: 'comments',
 };
 
+export const EVENTS_QUERY_PARAMS = {
+    PAGE_LIMIT: 10,
+    CATEGORY_TYPE: {
+        ALL: { code: 0, label: 'All' },
+        MY: { code: 1, label: 'My' },
+        OTHER: { code: 2, label: 'Other' },
+    },
+};
+
+export const QUERY_DEFAULT_PARAMS = {
+    defaultOptions: {
+        queries: {
+            staleTime: 1 * 600 * 1000,
+            cacheTime: 5 * 60 * 1000,
+            retry: 5,
+            retryDelay: 5000,
+        },
+    },
+};
+
 export const METHODS = {
     GET: 'GET',
     POST: 'POST',

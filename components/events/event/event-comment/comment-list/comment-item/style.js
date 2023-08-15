@@ -1,4 +1,4 @@
-import { styled } from '@mui/system';
+import { styled } from '@mui/material/styles';
 
 export const StyledCommentWrapper = styled('div')(() => ({
     minHeight: '150px',

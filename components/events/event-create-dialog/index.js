@@ -15,7 +15,7 @@ import useDidUpdate from 'hooks/useDidUpdate';
 import { useCreateEvent, useUpdateEvent } from 'services/event';
 import validationSchema from './validationSchema';
 
-function EventDialogCreate({ isOpen, onCreate, onEdit, onClose, propData }) {
+function EventDialogCreate({ isOpen, onClose, propData }) {
     const defaultValues = useMemo(() => {
         if (propData) {
             const { title, location, date, description } = propData;
@@ -71,27 +71,18 @@ function EventDialogCreate({ isOpen, onCreate, onEdit, onClose, propData }) {
     };
 
     const formSubmitHandler = async (data) => {
+        const formData = new FormData();
+        formData.append('title', data.title);
+        formData.append('description', data.description);
+        formData.append('location', data.location);
+        formData.append('date', data.date);
+        formData.append('file', data.file);
         if (propData) {
-            const formData = new FormData();
-            formData.append('title', data.title);
-            formData.append('description', data.description);
-            formData.append('location', data.location);
-            formData.append('date', data.date);
-            formData.append('file', data.file);
             await updateEvent(propData._id, formData);
-            handleClose();
-            onEdit && (await onEdit());
         } else {
-            const formData = new FormData();
-            formData.append('title', data.title);
-            formData.append('description', data.description);
-            formData.append('location', data.location);
-            formData.append('date', data.date);
-            formData.append('file', data.file);
             await createEvent(formData);
-            handleClose();
-            onCreate && (await onCreate());
         }
+        handleClose();
     };
 
     return (

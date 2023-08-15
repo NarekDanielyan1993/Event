@@ -8,12 +8,14 @@ export const apiRequest = ({
     method,
     url,
     body = null,
+    params = null,
     headers = null,
     options = null,
 }) => {
     const config = {
         method: method.toLowerCase(),
         url,
+        ...(params && { params: params }),
         ...(body && { data: body }),
         headers: {
             ...(headers && { headers }),

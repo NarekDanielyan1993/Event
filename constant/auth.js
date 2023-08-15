@@ -3,6 +3,12 @@ export const AUTH_SESSION_OPTIONS = {
     refetchOnWindowFocus: true,
 };
 
+export const SESSION_STATUS = {
+    AUTHENTICATED: 'authenticated',
+    UNAUTHENTICATED: 'unauthenticated',
+    LOADING: 'loading',
+};
+
 export const AUTH_ENCRYPTION_LENGTH = 12;
 
 export const AUTH_REDIRECT_PATH = '/events';

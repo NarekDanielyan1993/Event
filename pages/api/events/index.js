@@ -28,8 +28,6 @@ const router = createRouter();
 
 router.use(dbMiddleware);
 
-router.use(authMiddleware);
-
 export const config = {
     api: {
         bodyParser: false,
@@ -41,16 +39,26 @@ router.get(async (req, res) => {
         const {
             user: { userId },
         } = await getServerSession(req, res, authOptions);
-        const allEvents = await Event.getEventsByCategory(userId);
+        const { categoryType, limit, offset, filter, filterBy } = req.query;
+        console.log('categoryType', categoryType);
+        const allEvents = await Event.getPaginatedEventsByCategory({
+            categoryType,
+            userId,
+            offset,
+            limit,
+            filter,
+            filterBy,
+        });
         console.log('allEvents', allEvents);
 
-        res.status(200).json({ msg: 'success', events: allEvents });
+        res.status(200).json(allEvents);
     } catch (error) {
         handleError(error, res);
     }
 });
 
 router.post(
+    authMiddleware,
     fileUploadMiddleware,
     validateRequest(createEventValidationSchema),
     async (req, res) => {
@@ -85,6 +93,7 @@ router.post(
 );
 
 router.put(
+    authMiddleware,
     fileUploadMiddleware,
     validateRequest(updateEventValidationSchema),
     async (req, res) => {
@@ -122,10 +131,9 @@ router.put(
     }
 );
 
-router.delete(async (req, res) => {
+router.delete(authMiddleware, async (req, res) => {
     try {
         const { id } = req.query;
-
         if (!id) {
             throw new InternalServerError();
         }

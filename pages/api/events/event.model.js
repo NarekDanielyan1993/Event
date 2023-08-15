@@ -1,5 +1,6 @@
 import mongoose from 'mongoose';
 
+import { EVENTS_QUERY_PARAMS } from 'constant';
 import { connectDB } from 'lib';
 import { CustomDate } from 'utils';
 
@@ -43,28 +44,68 @@ eventSchema.statics.getAllEvents = async function () {
     }
 };
 
-eventSchema.statics.getEventsByCategory = async function (userId) {
+eventSchema.statics.getPaginatedEventsByCategory = async function ({
+    categoryType,
+    userId,
+    offset = 0,
+    limit,
+    sort = 1,
+    filter,
+    filterBy,
+}) {
     try {
-        console.log('userId', userId);
         await connectDB();
-        const allEvents = await this.find();
-        console.log('allEvents', allEvents);
-        const myEvents = allEvents.filter(
-            (event) => event.userId.toString() === userId
-        );
-        const otherEvents = allEvents.filter(
-            (event) => event.userId.toString() !== userId
-        );
+        const eventsByCategory = {
+            labels: [
+                EVENTS_QUERY_PARAMS.CATEGORY_TYPE.ALL.label,
+                EVENTS_QUERY_PARAMS.CATEGORY_TYPE.MY.label,
+                EVENTS_QUERY_PARAMS.CATEGORY_TYPE.OTHER.label,
+            ],
+            data: [],
+        };
+        let sortedData = [];
 
-        const eventsByCategory = [
-            { label: 'All', data: allEvents, id: 0 },
-            { label: 'My', data: myEvents, id: 1 },
-            { label: 'Other', data: otherEvents, id: 2 },
-        ];
+        let query = {};
+        const type = parseInt(categoryType);
 
+        let startDate;
+        let endDate;
+        if (filter) {
+            if (filterBy === 'date') {
+                startDate = CustomDate.getStartOfMonth(filter);
+                endDate = CustomDate.getEndOfMonth(startDate);
+                query = { ...query, date: { $gte: startDate, $lte: endDate } };
+            }
+        }
+        if (type === EVENTS_QUERY_PARAMS.CATEGORY_TYPE.MY.code) {
+            query.userId = userId;
+        }
+        if (type === EVENTS_QUERY_PARAMS.CATEGORY_TYPE.OTHER.code) {
+            query.userId = { $ne: userId };
+            console.log('userId', userId);
+            console.log('type', type);
+            console.log('offset', offset);
+        }
+
+        if (limit) {
+            sortedData = await this.find(query)
+                .sort({ date: sort })
+                .skip(offset)
+                .limit(limit);
+        } else {
+            sortedData = await this.find(query)
+                .sort({ date: sort })
+                .skip(offset);
+        }
+
+        const totalCount = await this.countDocuments(query);
+
+        eventsByCategory.data = sortedData;
+        eventsByCategory.totalCount = totalCount;
+        console.log('eventsByCategory', eventsByCategory);
         return JSON.parse(JSON.stringify(eventsByCategory));
     } catch (err) {
-        console.error('Error accured while retrieving all events');
+        console.error('Error occurred while retrieving all events');
         throw err;
     }
 };
@@ -81,10 +122,10 @@ eventSchema.statics.getEventById = async function (id) {
     }
 };
 
-eventSchema.statics.getUpcamingEvents = async function () {
+eventSchema.statics.getUpcamingEvents = async function (sort = 1) {
     try {
         await connectDB();
-        const events = await this.find().sort({ date: 1 });
+        const events = await this.find().sort({ date: sort });
         return JSON.parse(JSON.stringify(events));
     } catch (error) {
         console.error('Error accured while getting upcaming events');

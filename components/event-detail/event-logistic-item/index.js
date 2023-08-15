@@ -5,10 +5,10 @@ function LogisticsItem(props) {
 
     return (
         <StyledLogisticItem>
-            <span className={'icon'}>
+            <span className="icon">
                 <Icon />
             </span>
-            <span className={'content'}>{props.children}</span>
+            <span className="content">{props.children}</span>
         </StyledLogisticItem>
     );
 }

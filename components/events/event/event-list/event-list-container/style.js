@@ -1,7 +1,8 @@
-import { styled } from '@mui/system';
+import { styled } from '@mui/material/styles';
 
-const StyledEventList = styled('ul')(() => ({
-    maxWidth: '80%',
+const StyledEventListContainer = styled('ul')(() => ({
+    maxWidth: '1200px',
+    width: '100%',
     margin: '0 auto',
     padding: 0,
     justifyContent: 'center',
@@ -12,4 +13,4 @@ const StyledEventList = styled('ul')(() => ({
     listStyleType: 'none',
 }));
 
-export default StyledEventList;
+export default StyledEventListContainer;

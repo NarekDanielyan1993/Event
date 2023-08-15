@@ -1,5 +1,5 @@
 import { Button } from '@mui/material';
-import { styled } from '@mui/system';
+import { styled } from '@mui/material/styles';
 
 export const StyledUnsubscribeContainer = styled('div')(({ theme }) => ({
     maxWidth: theme.spacing(80),

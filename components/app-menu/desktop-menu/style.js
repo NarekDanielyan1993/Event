@@ -1,4 +1,4 @@
-import { styled } from '@mui/system';
+import { styled } from '@mui/material/styles';
 
 export const StyledNav = styled('nav')(({ theme }) => ({
     display: 'flex',

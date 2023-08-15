@@ -1,23 +1,27 @@
 'use client';
 
-import { CacheProvider, ThemeProvider } from '@emotion/react';
+import { CacheProvider } from '@emotion/react';
 import { CssBaseline } from '@mui/material';
+import { ThemeProvider } from '@mui/material/styles';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import {
+    Hydrate,
+    QueryClient,
+    QueryClientProvider,
+} from '@tanstack/react-query';
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
+import Layout from 'components/Layout';
+import { AuthRoute } from 'components/auth-route';
+import { Fallback } from 'components/error/error-boundary-fallback';
+import { AUTH_SESSION_OPTIONS, QUERY_DEFAULT_PARAMS } from 'constant';
+import useGetLayout from 'hooks/useGetLayout';
 import { SessionProvider } from 'next-auth/react';
 import Head from 'next/head';
 import { SnackbarProvider } from 'notistack';
 import PropTypes from 'prop-types';
-import { ErrorBoundary } from 'react-error-boundary';
-import { ReactQueryDevtools } from 'react-query/devtools';
-
-import Layout from 'components/Layout';
-import { Fallback } from 'components/error/error-boundary-fallback';
-import IsProtected from 'components/is-protected';
-import { AUTH_SESSION_OPTIONS } from 'constant';
-import useGetLayout from 'hooks/useGetLayout';
 import { useState } from 'react';
-import { Hydrate, QueryClient, QueryClientProvider } from 'react-query';
+import { ErrorBoundary } from 'react-error-boundary';
 import { createEmotionCache, logError } from 'utils';
 import '../styles/globals.css';
 import theme from '../styles/theme';
@@ -32,17 +36,8 @@ function MyApp(props) {
     } = props;
 
     const SelectedLayout = useGetLayout(Component, Layout);
-    const [queryClient] = useState(
-        () =>
-            new QueryClient({
-                defaultOptions: {
-                    queries: {
-                        staleTime: 6 * 60 * 1000,
-                        cacheTime: 20 * 60 * 1000,
-                    },
-                },
-            })
-    );
+
+    const [queryClient] = useState(() => new QueryClient(QUERY_DEFAULT_PARAMS));
 
     return (
         <CacheProvider value={emotionCache}>
@@ -73,12 +68,17 @@ function MyApp(props) {
                                     initialIsOpen={false}
                                 >
                                     <Hydrate state={pageProps.dehydratedState}>
-                                        <SelectedLayout>
-                                            <IsProtected
-                                                component={Component}
-                                                pageProps={pageProps}
-                                            />
-                                        </SelectedLayout>
+                                        {Component.auth ? (
+                                            <AuthRoute>
+                                                <SelectedLayout>
+                                                    <Component {...pageProps} />
+                                                </SelectedLayout>
+                                            </AuthRoute>
+                                        ) : (
+                                            <SelectedLayout>
+                                                <Component {...pageProps} />
+                                            </SelectedLayout>
+                                        )}
                                     </Hydrate>
                                     <ReactQueryDevtools initialIsOpen={false} />
                                 </QueryClientProvider>

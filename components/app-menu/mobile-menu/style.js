@@ -1,4 +1,4 @@
-import { styled } from '@mui/system';
+import { styled } from '@mui/material/styles';
 
 export const StyledMobileMenu = styled('div')(({ theme }) => ({
     display: 'none',

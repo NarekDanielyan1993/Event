@@ -49,6 +49,7 @@ export const authOptions = {
                 if (!isValid) {
                     throw new ValidationError('Wrong password');
                 }
+
                 return {
                     email: currentUser.email,
                     userId: currentUser._id.toString(),

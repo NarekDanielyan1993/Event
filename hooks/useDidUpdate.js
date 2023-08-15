@@ -6,9 +6,9 @@ function useDidUpdate(callback, dependencies) {
     useEffect(() => {
         if (!hasMounted.current) {
             hasMounted.current = true;
-            return;
+        } else {
+            callback();
         }
-        callback();
     }, dependencies);
 }
 

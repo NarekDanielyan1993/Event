@@ -1,4 +1,4 @@
-import { styled } from '@mui/system';
+import { styled } from '@mui/material/styles';
 
 export const StyledNewsLetterContainer = styled('section')({
     maxWidth: '400px',

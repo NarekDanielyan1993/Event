@@ -1,5 +1,5 @@
 import { Box } from '@mui/material';
-import { styled } from '@mui/system';
+import { styled } from '@mui/material/styles';
 import ErrorOutline from 'components/icons/error-outline';
 
 export const StyledNotFound = styled(Box)(() => ({

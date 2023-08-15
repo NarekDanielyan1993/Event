@@ -7,14 +7,19 @@ import {
 } from '@mui/material';
 
 import { transformErrorData } from 'utils';
-
 import { StyledDialog } from './style';
 
 function ErrorDialog({ open, onClose, error }) {
     const errorObject = transformErrorData(error);
 
     return (
-        <StyledDialog fullWidth maxWidth="sm" onClose={onClose} open={open}>
+        <StyledDialog
+            aria-label="error-dialog"
+            fullWidth
+            maxWidth="sm"
+            onClose={onClose}
+            open={open}
+        >
             <DialogTitle sx={{ backgroundColor: 'red', color: 'white' }}>
                 {errorObject.title}
             </DialogTitle>
