@@ -42,7 +42,6 @@ function FormInput({
         label,
         fullWidth: true,
         inputProps: {
-            // autoComplete: 'new-password',
             form: {
                 autoComplete: 'off',
             },

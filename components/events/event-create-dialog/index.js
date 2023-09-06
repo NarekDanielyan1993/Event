@@ -99,26 +99,26 @@ function EventDialogCreate({ isOpen, onClose, propData }) {
                 <DialogTitle>{propData ? 'Edit' : 'Create'} Event</DialogTitle>
                 <DialogContent>
                     <Grid container spacing={2} sx={{ marginTop: '10px' }}>
-                        <Grid item xs={6}>
+                        <Grid item md={6} xs={12}>
                             {FormField({
                                 name: 'title',
                                 label: 'Title',
                             })}
                         </Grid>
-                        <Grid item xs={6}>
+                        <Grid item md={6} xs={12}>
                             {FormField({
                                 name: 'location',
                                 label: 'Location',
                             })}
                         </Grid>
-                        <Grid item xs={6}>
+                        <Grid item md={6} xs={12}>
                             {FormField({
                                 name: 'date',
                                 type: 'custom-date',
                                 label: 'Event Date',
                             })}
                         </Grid>
-                        <Grid item xs={6}>
+                        <Grid item md={6} xs={12}>
                             {FormField({
                                 name: 'file',
                                 label: 'Upload File',

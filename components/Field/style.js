@@ -43,9 +43,10 @@ export const StyledFileInput = styled('input')(({ theme }) => ({
     },
     '&::file-selector-button': {
         display: 'flex',
+        width: '100%',
         alignItems: 'center',
         justifyContent: 'center',
-        padding: `${theme.spacing(1)} ${theme.spacing(1.5)}`,
+        padding: `${theme.spacing(1.5)} ${theme.spacing(1.5)}`,
         backgroundColor: theme.palette.primary.main,
         color: '#fff',
         borderRadius: theme.spacing(0.5),

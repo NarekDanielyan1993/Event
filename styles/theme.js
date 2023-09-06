@@ -1,4 +1,4 @@
-import { createTheme } from "@mui/material/styles";
+import { createTheme } from '@mui/material/styles';
 
 const theme = createTheme({
     spacing: 8,
@@ -85,20 +85,24 @@ const theme = createTheme({
                         )} ${theme.typography.pxToRem(14)}`,
                         textTransform: 'uppercase',
                         [theme.breakpoints.up('xs')]: {
-                            fontSize: theme.typography.pxToRem(8),
-                            lineHeight: theme.typography.pxToRem(20),
-                        },
-                        [theme.breakpoints.up('sm')]: {
-                            fontSize: theme.typography.pxToRem(12),
-                            lineHeight: theme.typography.pxToRem(20),
-                        },
-                        [theme.breakpoints.up('md')]: {
                             fontSize: theme.typography.pxToRem(14),
                             lineHeight: theme.typography.pxToRem(20),
                         },
+                        [theme.breakpoints.up('sm')]: {
+                            fontSize: theme.typography.pxToRem(18),
+                            lineHeight: theme.typography.pxToRem(20),
+                        },
+                        [theme.breakpoints.up('md')]: {
+                            fontSize: theme.typography.pxToRem(18),
+                            lineHeight: theme.typography.pxToRem(20),
+                        },
                         [theme.breakpoints.up('lg')]: {
-                            fontSize: theme.typography.pxToRem(16),
+                            fontSize: theme.typography.pxToRem(18),
                             lineHeight: theme.typography.pxToRem(22),
+                        },
+                        [theme.breakpoints.up('xl')]: {
+                            fontSize: theme.typography.pxToRem(22),
+                            lineHeight: theme.typography.pxToRem(24),
                         },
                     };
                 },
@@ -113,19 +117,23 @@ const theme = createTheme({
                         )} ${theme.typography.pxToRem(12)}`,
                         textTransform: 'uppercase',
                         [theme.breakpoints.up('xs')]: {
-                            fontSize: theme.typography.pxToRem(8),
-                            lineHeight: theme.typography.pxToRem(20),
+                            fontSize: theme.typography.pxToRem(14),
+                            lineHeight: theme.typography.pxToRem(16),
                         },
                         [theme.breakpoints.up('sm')]: {
-                            fontSize: theme.typography.pxToRem(12),
-                            lineHeight: theme.typography.pxToRem(20),
+                            fontSize: theme.typography.pxToRem(16),
+                            lineHeight: theme.typography.pxToRem(18),
                         },
                         [theme.breakpoints.up('md')]: {
-                            fontSize: theme.typography.pxToRem(14),
-                            lineHeight: theme.typography.pxToRem(22),
+                            fontSize: theme.typography.pxToRem(18),
+                            lineHeight: theme.typography.pxToRem(20),
                         },
                         [theme.breakpoints.up('lg')]: {
-                            fontSize: theme.typography.pxToRem(16),
+                            fontSize: theme.typography.pxToRem(18),
+                            lineHeight: theme.typography.pxToRem(22),
+                        },
+                        [theme.breakpoints.up('xl')]: {
+                            fontSize: theme.typography.pxToRem(22),
                             lineHeight: theme.typography.pxToRem(24),
                         },
                     };
