@@ -23,7 +23,7 @@ export const usePaginatedEvents = (
     enabled
 ) => {
     const PAGE_LIMIT = EVENTS_QUERY_PARAMS.PAGE_LIMIT;
-    const currentPageRef = useRef(1);
+    const currentPageRef = useRef(0);
 
     const fetchPaginatedData = async ({
         pageParam,
@@ -43,7 +43,7 @@ export const usePaginatedEvents = (
                 ...(filterBy && { filterBy: 'date' }),
             },
         });
-        currentPageRef.current = pageParam + 1;
+        currentPageRef.current = pageParam;
         return data;
     };
 
@@ -54,56 +54,44 @@ export const usePaginatedEvents = (
         isFetchingNextPage,
         hasNextPage,
         isLoading,
-        refetch,
         fetchNextPage,
     } = useInfiniteQuery(
+        [GET_PAGINATED_EVENTS_BY_CATEGORY, type, filter],
+        ({ pageParam = 0 }) => fetchPaginatedData({ pageParam, type, filter }),
         {
-            queryKey: [GET_PAGINATED_EVENTS_BY_CATEGORY, type, filter],
-            queryFn: ({ pageParam = 0 }) =>
-                fetchPaginatedData({ pageParam, type, filter }),
+            getNextPageParam: (lastPage) => {
+                return (currentPageRef.current + 1) * PAGE_LIMIT <
+                    lastPage.totalCount
+                    ? currentPageRef.current + 1
+                    : undefined;
+            },
+            getPreviousPageParam: (firstPage) => firstPage.prevCursor,
             select: (data) => {
                 return {
-                    pages: data.pages,
-                    pageParams: data.pageParams,
-                    data: data.pages[0],
+                    labels: data?.pages[0]?.labels || [],
+                    data: data?.pages.flatMap((page) => page.data) || [],
+                    totalCount: data.pages[0].totalCount || 0,
                 };
             },
-        },
-        {
-            refetchOnWindowFocus: false,
-            enabled: enabled,
-        },
-        {
-            getNextPageParam: (lastPage, allPages) => {
-                console.log('lastPage', lastPage);
-                console.log('allPages', allPages);
-                const nextPage = currentPageRef.current;
-                const totalPages = Math.ceil(
-                    lastPage.events.totalCount / PAGE_LIMIT
-                );
-                console.log('totalPages', totalPages);
-                return nextPage <= totalPages ? nextPage : undefined;
-            },
+            keepPreviousData: true,
+            staleTime: Infinity,
         }
     );
+
     const { sentinelRef } = useObserver({
         callback: fetchNextPage,
         isEnabled: hasNextPage,
     });
 
-    console.log('data', data);
-    console.log('hasNextPage', hasNextPage);
     return {
         status,
-        data: data?.data,
+        data: data || [],
         error,
         sentinelRef,
         isFetchingNextPage,
         hasNextPage,
-        refetch,
         isLoading: isLoading,
         fetchNextPage,
-        queryFn: fetchPaginatedData,
     };
 };
 

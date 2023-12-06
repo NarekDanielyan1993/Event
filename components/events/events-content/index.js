@@ -48,6 +48,8 @@ export default function EventContent({
         hasNextPage,
         sentinelRef,
     } = usePaginatedEvents(category, filterData, true);
+    console.log(isFetchingNextPage);
+    console.log(hasNextPage);
 
     const handleChange = async (event, newValue) => {
         setCategory(newValue);
@@ -89,9 +91,11 @@ export default function EventContent({
                     </EventListContainer>
                 </CustomTabPanel>
             )}
-            <Typography ref={sentinelRef}>
-                {isFetchingNextPage && hasNextPage && 'Loading...'}
-            </Typography>
+            <div style={{ height: '20px' }}>
+                <Typography ref={sentinelRef} textAlign="center">
+                    {isFetchingNextPage && 'Loading...'}
+                </Typography>
+            </div>
         </>
     );
 }

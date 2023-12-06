@@ -40,7 +40,6 @@ router.get(async (req, res) => {
             user: { userId },
         } = await getServerSession(req, res, authOptions);
         const { categoryType, limit, offset, filter, filterBy } = req.query;
-        console.log('categoryType', categoryType);
         const allEvents = await Event.getPaginatedEventsByCategory({
             categoryType,
             userId,
@@ -49,7 +48,6 @@ router.get(async (req, res) => {
             filter,
             filterBy,
         });
-        console.log('allEvents', allEvents);
 
         res.status(200).json(allEvents);
     } catch (error) {

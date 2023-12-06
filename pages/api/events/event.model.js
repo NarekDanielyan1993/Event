@@ -82,9 +82,6 @@ eventSchema.statics.getPaginatedEventsByCategory = async function ({
         }
         if (type === EVENTS_QUERY_PARAMS.CATEGORY_TYPE.OTHER.code) {
             query.userId = { $ne: userId };
-            console.log('userId', userId);
-            console.log('type', type);
-            console.log('offset', offset);
         }
 
         if (limit) {
@@ -102,7 +99,6 @@ eventSchema.statics.getPaginatedEventsByCategory = async function ({
 
         eventsByCategory.data = sortedData;
         eventsByCategory.totalCount = totalCount;
-        console.log('eventsByCategory', eventsByCategory);
         return JSON.parse(JSON.stringify(eventsByCategory));
     } catch (err) {
         console.error('Error occurred while retrieving all events');

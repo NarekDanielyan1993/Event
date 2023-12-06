@@ -21,12 +21,11 @@ function EventComments({ eventId }) {
 
     const [showComments, setShowComments] = useState(false);
 
-    const { isLoading: isCreateCommentLoading, createComment } =
+    const { isLoading: isCreateCommentLoading, mutateAsync: createComment } =
         useCreateComment();
 
-    const { isLoading: isCommentsLoading, getComments } =
+    const { isFetching: isCommentsLoading, refetch: getComments } =
         useGetComments(eventId);
-
     const { isLoading: isUpdateCommentLoading, updateComment } =
         useUpdateComment();
 
@@ -36,8 +35,8 @@ function EventComments({ eventId }) {
     const getCommentsHandler = async () => {
         try {
             if (!showComments) {
-                const allComments = await getComments();
-                setCommentList(allComments);
+                const { data } = await getComments();
+                setCommentList(data);
             }
         } catch (error) {
             showBoundary(error);

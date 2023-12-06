@@ -1,44 +1,32 @@
 /* eslint-disable no-useless-catch */
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import { EVENTS_PATHS, METHODS } from 'constant';
 import { apiRequest } from 'utils';
 
 export const GET_COMMENTS = 'GET_COMMENTS';
 
 const useGetComments = (eventId) => {
-    const { isLoading, refetch } = useQuery(
-        {
-            queryKey: [GET_COMMENTS, eventId],
-            queryFn: async ({ queryKey: [, eventId] }) => {
-                const {
-                    data: { comments },
-                } = await apiRequest({
-                    method: METHODS.GET,
-                    url: `${EVENTS_PATHS.EVENT_COMMENTS}/${eventId}`,
-                });
-                return comments;
-            },
+    return useQuery(
+        [GET_COMMENTS, eventId],
+        async ({ queryKey: [, eventId] }) => {
+            const {
+                data: { comments },
+            } = await apiRequest({
+                method: METHODS.GET,
+                url: `${EVENTS_PATHS.EVENT_COMMENTS}/${eventId}`,
+            });
+            return comments;
         },
         {
             enabled: false,
+            refetchOnWindowFocus: false,
         }
     );
-
-    const getComments = async () => {
-        try {
-            const { data } = await refetch();
-            return data;
-        } catch (error) {
-            throw error;
-        }
-    };
-
-    return { isLoading, getComments };
 };
 
 const useCreateComment = () => {
-    const queryClient = useQueryClient();
-    const { isLoading, mutateAsync } = useMutation(
+    // const queryClient = useQueryClient();
+    return useMutation(
         async ({ eventId, formData }) => {
             const { data: newComment } = await apiRequest({
                 method: METHODS.POST,
@@ -46,24 +34,24 @@ const useCreateComment = () => {
                 body: formData,
             });
             return newComment;
-        },
-        {
-            onSuccess: () => {
-                queryClient.invalidateQueries(GET_COMMENTS);
-            },
         }
+        // {
+        //     onSuccess: () => {
+        //         queryClient.invalidateQueries(GET_COMMENTS);
+        //     },
+        // }
     );
 
-    const createComment = async (eventId, formData) => {
-        try {
-            const { data } = await mutateAsync({ eventId, formData });
-            return data;
-        } catch (error) {
-            throw error;
-        }
-    };
+    // const createComment = async (eventId, formData) => {
+    //     try {
+    //         const { data } = await mutateAsync({ eventId, formData });
+    //         return data;
+    //     } catch (error) {
+    //         throw error;
+    //     }
+    // };
 
-    return { isLoading: isLoading, createComment };
+    // return { isLoading: isLoading, createComment };
 };
 
 const useUpdateComment = () => {

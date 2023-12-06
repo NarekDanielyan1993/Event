@@ -15,7 +15,7 @@ router.post(validateRequest(newsLetterValidationSchema), async (req, res) => {
     try {
         const { email } = req.body;
 
-        await Subscriber.storeEmail({ email });
+        await Subscriber.storeEmail({ email: email.toLowerCase() });
         res.status(201).json({ msg: 'success' });
     } catch (error) {
         handleError(error, res);
@@ -33,7 +33,7 @@ router.delete(
                     'You have already unsubscribed from the notifications.'
                 );
             }
-            await Subscriber.deleteEmail(email);
+            await Subscriber.deleteEmail(email.toLowerCase());
             res.status(201).json({ msg: 'success' });
         } catch (error) {
             handleError(error, res);

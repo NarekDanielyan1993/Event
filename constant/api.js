@@ -23,7 +23,7 @@ export const COLLECTION_NAMES = {
 };
 
 export const EVENTS_QUERY_PARAMS = {
-    PAGE_LIMIT: 10,
+    PAGE_LIMIT: 6,
     CATEGORY_TYPE: {
         ALL: { code: 0, label: 'All' },
         MY: { code: 1, label: 'My' },
@@ -34,8 +34,8 @@ export const EVENTS_QUERY_PARAMS = {
 export const QUERY_DEFAULT_PARAMS = {
     defaultOptions: {
         queries: {
-            staleTime: 1 * 600 * 1000,
-            cacheTime: 5 * 60 * 1000,
+            staleTime: 10 * 60 * 1000,
+            cacheTime: 10 * 60 * 1000,
             retry: 5,
             retryDelay: 5000,
         },

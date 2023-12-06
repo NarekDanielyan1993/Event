@@ -1,6 +1,8 @@
 import useForm from 'hooks/useForm';
 
 import Button from 'components/button';
+import Loader from 'components/loader';
+import { useErrorBoundary } from 'react-error-boundary';
 import {
     StyledNewsLetterContainer,
     StyledNewsLetterForm,
@@ -8,7 +10,8 @@ import {
 } from './style';
 import { validationSchema } from './validationSchema';
 
-function NewsLetter({ formSubmitHandler }) {
+function NewsLetter({ formSubmitHandler, isLoading }) {
+    const { showBoundary } = useErrorBoundary();
     const { handleSubmit, FormField, reset } = useForm({
         validationSchema: validationSchema,
         defaultValues: {
@@ -17,12 +20,17 @@ function NewsLetter({ formSubmitHandler }) {
     });
 
     const onFormSubmit = async (data) => {
-        await formSubmitHandler(data);
-        reset();
+        try {
+            await formSubmitHandler(data);
+            reset();
+        } catch (error) {
+            showBoundary(error);
+        }
     };
 
     return (
         <StyledNewsLetterContainer>
+            {isLoading && <Loader />}
             <StyledNewsLetterTitle>
                 Sign up to stay updated
             </StyledNewsLetterTitle>

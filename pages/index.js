@@ -14,10 +14,6 @@ import Event from './api/events/event.model';
 export default function HomePage() {
     const { isLoading, registerMailForNews } = useRegisterMailForNews();
 
-    const formSubmitHandler = async (data) => {
-        await registerMailForNews(data);
-    };
-
     const { data: events, isLoading: isDataLoading } = usePaginatedEvents(
         EVENTS_QUERY_PARAMS.CATEGORY_TYPE.ALL.code,
         ''
@@ -26,14 +22,14 @@ export default function HomePage() {
         <>
             <section style={{ marginBottom: '20px' }}>
                 <NewsLetter
-                    formSubmitHandler={formSubmitHandler}
+                    formSubmitHandler={registerMailForNews}
                     isLoading={isLoading}
                 />
             </section>
             <EventListContainer>
                 <EventList items={events?.data} onlyView={true} />
             </EventListContainer>
-            {isLoading && isDataLoading && <Loader />}
+            {isDataLoading && <Loader />}
         </>
     );
 }
@@ -46,7 +42,7 @@ export async function getServerSideProps() {
             queryKey: [
                 GET_PAGINATED_EVENTS_BY_CATEGORY,
                 EVENTS_QUERY_PARAMS.CATEGORY_TYPE.ALL.code,
-                ''
+                '',
             ],
             queryFn: ({ pageParam = 0, queryKey }) =>
                 Event.getPaginatedEventsByCategory({
