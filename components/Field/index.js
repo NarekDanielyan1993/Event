@@ -17,7 +17,7 @@ import { Controller } from 'react-hook-form';
 import { ALLOWED_FILE_TYPES } from 'constant';
 
 import { StyledFileInput, StyledTextField, styleMuiTextField } from './style';
-
+console.log(4545);
 function FormInput({
     control,
     name,
