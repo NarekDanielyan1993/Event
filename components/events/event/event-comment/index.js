@@ -47,7 +47,10 @@ function EventComments({ eventId }) {
     const onSubmit = async (data) => {
         try {
             const finalData = { ...data };
-            const newComment = await createComment(eventId, finalData);
+            const newComment = await createComment({
+                eventId,
+                formData: finalData,
+            });
             setCommentList((prev) => [newComment, ...prev]);
         } catch (error) {
             showBoundary(error);

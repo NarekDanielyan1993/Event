@@ -8,7 +8,6 @@ import {
 } from '@tanstack/react-query';
 import { EVENTS_PATHS, EVENTS_QUERY_PARAMS, METHODS } from 'constant';
 import useObserver from 'hooks/useObserver';
-import { useRef } from 'react';
 import { apiRequest } from 'utils';
 
 const GET_FILTERED_EVENTS = 'GET_FILTERED_EVENTS';
@@ -23,7 +22,6 @@ export const usePaginatedEvents = (
     enabled
 ) => {
     const PAGE_LIMIT = EVENTS_QUERY_PARAMS.PAGE_LIMIT;
-    const currentPageRef = useRef(0);
 
     const fetchPaginatedData = async ({
         pageParam,
@@ -43,7 +41,6 @@ export const usePaginatedEvents = (
                 ...(filterBy && { filterBy: 'date' }),
             },
         });
-        currentPageRef.current = pageParam;
         return data;
     };
 
@@ -59,11 +56,14 @@ export const usePaginatedEvents = (
         [GET_PAGINATED_EVENTS_BY_CATEGORY, type, filter],
         ({ pageParam = 0 }) => fetchPaginatedData({ pageParam, type, filter }),
         {
-            getNextPageParam: (lastPage) => {
-                return (currentPageRef.current + 1) * PAGE_LIMIT <
-                    lastPage.totalCount
-                    ? currentPageRef.current + 1
-                    : undefined;
+            getNextPageParam: (lastPage, allPages) => {
+                if (
+                    Math.ceil(lastPage.totalCount / PAGE_LIMIT) >
+                    allPages.length
+                ) {
+                    return allPages.length;
+                }
+                return undefined;
             },
             getPreviousPageParam: (firstPage) => firstPage.prevCursor,
             select: (data) => {
@@ -73,7 +73,6 @@ export const usePaginatedEvents = (
                     totalCount: data.pages[0].totalCount || 0,
                 };
             },
-            keepPreviousData: true,
             staleTime: Infinity,
         }
     );
@@ -85,7 +84,7 @@ export const usePaginatedEvents = (
 
     return {
         status,
-        data: data || [],
+        data: data || {},
         error,
         sentinelRef,
         isFetchingNextPage,

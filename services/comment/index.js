@@ -1,5 +1,5 @@
 /* eslint-disable no-useless-catch */
-import { useMutation, useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { EVENTS_PATHS, METHODS } from 'constant';
 import { apiRequest } from 'utils';
 
@@ -25,7 +25,7 @@ const useGetComments = (eventId) => {
 };
 
 const useCreateComment = () => {
-    // const queryClient = useQueryClient();
+    const queryClient = useQueryClient();
     return useMutation(
         async ({ eventId, formData }) => {
             const { data: newComment } = await apiRequest({
@@ -34,24 +34,13 @@ const useCreateComment = () => {
                 body: formData,
             });
             return newComment;
+        },
+        {
+            onSuccess: () => {
+                queryClient.invalidateQueries(GET_COMMENTS);
+            },
         }
-        // {
-        //     onSuccess: () => {
-        //         queryClient.invalidateQueries(GET_COMMENTS);
-        //     },
-        // }
     );
-
-    // const createComment = async (eventId, formData) => {
-    //     try {
-    //         const { data } = await mutateAsync({ eventId, formData });
-    //         return data;
-    //     } catch (error) {
-    //         throw error;
-    //     }
-    // };
-
-    // return { isLoading: isLoading, createComment };
 };
 
 const useUpdateComment = () => {

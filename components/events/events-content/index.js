@@ -50,12 +50,11 @@ export default function EventContent({
     } = usePaginatedEvents(category, filterData, true);
     console.log(isFetchingNextPage);
     console.log(hasNextPage);
-
     const handleChange = async (event, newValue) => {
         setCategory(newValue);
         setFilterData('');
     };
-
+    console.log(eventData);
     return (
         <>
             <Tabs
@@ -68,7 +67,8 @@ export default function EventContent({
                 value={category}
             >
                 {eventData &&
-                    eventData?.labels.map((label, index) => {
+                    eventData.labels &&
+                    eventData.labels.map((label, index) => {
                         return (
                             <Tab
                                 key={label}

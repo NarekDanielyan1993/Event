@@ -12,6 +12,7 @@ import Event from 'pages/api/events/event.model';
 
 export default function EventDetailPage({ event }) {
     const { status } = useSession();
+    console.log(event);
     return (
         <>
             <Head>
